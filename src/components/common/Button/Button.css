@@ -1,0 +1,141 @@
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Variants */
+.btn-primary {
+  background: linear-gradient(135deg, #FF6B35 0%, #E63946 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(230, 57, 70, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.2);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-success {
+  background: #06D6A0;
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #05c090;
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background: #EF476F;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #e63960;
+  transform: translateY(-2px);
+}
+
+.btn-warning {
+  background: #FFD166;
+  color: #073B4C;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background: #ffc850;
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid #FF6B35;
+  color: #FF6B35;
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: #FF6B35;
+  color: white;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #FF6B35;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: rgba(255, 107, 53, 0.1);
+}
+
+/* Sizes */
+.btn-small {
+  padding: 6px 14px;
+  font-size: 12px;
+}
+
+.btn-medium {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.btn-large {
+  padding: 14px 28px;
+  font-size: 16px;
+}
+
+/* Full width */
+.btn-full {
+  width: 100%;
+}
+
+/* Loading state */
+.btn-loading {
+  pointer-events: none;
+}
+
+.btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}

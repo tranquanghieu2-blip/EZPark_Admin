@@ -1,0 +1,151 @@
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #E9ECEF;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.table thead {
+  background: linear-gradient(135deg, #FF6B35 0%, #E63946 100%);
+  color: white;
+}
+
+.table thead th {
+  padding: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid #E9ECEF;
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background: #F7F7F7;
+}
+
+.table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.table tbody td {
+  padding: 14px 16px;
+  font-size: 14px;
+  color: #073B4C;
+}
+
+.table-row-clickable {
+  cursor: pointer;
+}
+
+.table-row-clickable:hover {
+  background: rgba(255, 107, 53, 0.05);
+}
+
+.table-loading,
+.table-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: #6C757D;
+}
+
+.table-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #E9ECEF;
+  border-top-color: #FF6B35;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Badge for status */
+.badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge-success {
+  background: #E7F9F3;
+  color: #06D6A0;
+}
+
+.badge-danger {
+  background: #FFEEF2;
+  color: #EF476F;
+}
+
+.badge-warning {
+  background: #FFF9E6;
+  color: #FFD166;
+}
+
+.badge-info {
+  background: #E6F4F9;
+  color: #118AB2;
+}
+
+/* Actions */
+.table-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.action-btn {
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  color: #6C757D;
+}
+
+.action-btn:hover {
+  background: #E9ECEF;
+  color: #073B4C;
+}
+
+.action-btn-primary {
+  color: #FF6B35;
+}
+
+.action-btn-primary:hover {
+  background: rgba(255, 107, 53, 0.1);
+  color: #E63946;
+}
+
+.action-btn-danger {
+  color: #EF476F;
+}
+
+.action-btn-danger:hover {
+  background: rgba(239, 71, 111, 0.1);
+  color: #d63760;
+}

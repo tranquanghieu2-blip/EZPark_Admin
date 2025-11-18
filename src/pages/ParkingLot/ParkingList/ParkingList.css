@@ -1,0 +1,45 @@
+.parking-list {
+  padding: 24px;
+  min-height: calc(100vh - 70px);
+  background: #F7F7F7;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #073B4C;
+  margin: 0 0 4px 0;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #6C757D;
+  margin: 0;
+}
+
+.list-toolbar {
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .parking-list {
+    padding: 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+}

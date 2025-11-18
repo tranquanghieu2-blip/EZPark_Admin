@@ -1,0 +1,92 @@
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.input-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #073B4C;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.input-required {
+  color: #EF476F;
+  font-size: 16px;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #E9ECEF;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  outline: none;
+  background: white;
+}
+
+.input-field:focus {
+  border-color: #FF6B35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.input-field:disabled {
+  background: #F7F7F7;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.input-field.input-error {
+  border-color: #EF476F;
+}
+
+.input-field.input-error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 71, 111, 0.1);
+}
+
+.input-with-icon {
+  padding-left: 45px;
+}
+
+.input-icon {
+  position: absolute;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  color: #6C757D;
+  font-size: 18px;
+}
+
+.input-error-text {
+  font-size: 12px;
+  color: #EF476F;
+  margin-top: 4px;
+}
+
+/* Textarea */
+textarea.input-field {
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* Select */
+select.input-field {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23073B4C' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
