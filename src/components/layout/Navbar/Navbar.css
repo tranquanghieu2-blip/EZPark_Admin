@@ -1,7 +1,7 @@
 .navbar {
   height: 70px;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: var(--bg-light);
+  box-shadow: 0 2px 8px var(--shadow-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -22,7 +22,7 @@
   background: none;
   border: none;
   font-size: 24px;
-  color: #073B4C;
+  color: var(--text-primary);
   cursor: pointer;
   padding: 8px;
   border-radius: 4px;
@@ -30,13 +30,13 @@
 }
 
 .menu-toggle:hover {
-  background: #E9ECEF;
+  background: var(--bg-dark);
 }
 
 .navbar-title {
   font-size: 20px;
   font-weight: 700;
-  color: #073B4C;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -51,7 +51,7 @@
   background: none;
   border: none;
   font-size: 20px;
-  color: #6C757D;
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 8px;
   border-radius: 4px;
@@ -59,8 +59,8 @@
 }
 
 .navbar-icon-btn:hover {
-  background: #E9ECEF;
-  color: #073B4C;
+  background: var(--bg-dark);
+  color: var(--text-primary);
 }
 
 .notification-badge {
@@ -88,12 +88,12 @@
 }
 
 .navbar-user:hover {
-  background: #F7F7F7;
+  background: var(--bg-dark);
 }
 
 .user-avatar {
   font-size: 36px;
-  color: #FF6B35;
+  color: var(--primary-color);
 }
 
 .user-info {
@@ -104,12 +104,12 @@
 .user-name {
   font-size: 14px;
   font-weight: 600;
-  color: #073B4C;
+  color: var(--text-primary);
 }
 
 .user-role {
   font-size: 12px;
-  color: #6C757D;
+  color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {

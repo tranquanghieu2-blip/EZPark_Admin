@@ -1,8 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaBars, FaBell, FaUserCircle } from 'react-icons/fa';
+import { ROUTES } from '../../../constants';
 import './Navbar.css';
 
 const Navbar = ({ onMenuClick, user }) => {
+  const navigate = useNavigate();
+
   return (
     <nav className="navbar">
       <div className="navbar-left">
@@ -18,7 +22,11 @@ const Navbar = ({ onMenuClick, user }) => {
           <span className="notification-badge">3</span>
         </button>
 
-        <div className="navbar-user">
+        <div 
+          className="navbar-user"
+          onClick={() => navigate(ROUTES.PROFILE)}
+          style={{ cursor: 'pointer' }}
+        >
           <FaUserCircle className="user-avatar" />
           <div className="user-info">
             <span className="user-name">{user?.name || 'Admin'}</span>

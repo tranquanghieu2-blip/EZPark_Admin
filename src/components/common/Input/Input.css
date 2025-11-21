@@ -8,7 +8,7 @@
 .input-label {
   font-size: 14px;
   font-weight: 600;
-  color: #073B4C;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -28,21 +28,22 @@
 .input-field {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #E9ECEF;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.3s ease;
   outline: none;
-  background: white;
+  background: var(--bg-light);
+  color: var(--text-primary);
 }
 
 .input-field:focus {
-  border-color: #FF6B35;
+  border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
 }
 
 .input-field:disabled {
-  background: #F7F7F7;
+  background: var(--bg-dark);
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -64,7 +65,7 @@
   left: 16px;
   display: flex;
   align-items: center;
-  color: #6C757D;
+  color: var(--text-secondary);
   font-size: 18px;
 }
 

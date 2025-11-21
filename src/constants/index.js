@@ -34,6 +34,7 @@ export const API_BASE_URL = 'http://localhost:5000/api';
 export const ROUTES = {
   LOGIN: '/login',
   DASHBOARD: '/',
+  PROFILE: '/profile',
   
   // Parking Lots
   PARKING_LIST: '/parking-lots',
