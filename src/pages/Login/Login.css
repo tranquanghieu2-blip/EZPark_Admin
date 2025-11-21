@@ -62,9 +62,9 @@
 }
 
 .login-card {
-  background: white;
+  background: var(--bg-light);
   border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px var(--shadow-color);
   padding: 48px;
   width: 100%;
   max-width: 460px;
@@ -120,7 +120,7 @@
 
 .login-subtitle {
   font-size: 14px;
-  color: #6C757D;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -131,12 +131,12 @@
 .login-footer {
   text-align: center;
   padding-top: 20px;
-  border-top: 1px solid #E9ECEF;
+  border-top: 1px solid var(--border-color);
 }
 
 .login-footer p {
   font-size: 12px;
-  color: #6C757D;
+  color: var(--text-secondary);
   margin: 0;
 }
 

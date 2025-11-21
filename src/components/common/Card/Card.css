@@ -1,17 +1,17 @@
 .card {
-  background: white;
+  background: var(--bg-light);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px var(--shadow-color);
   overflow: hidden;
   transition: all 0.3s ease;
 }
 
 .card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px var(--shadow-color);
 }
 
 .card-gradient {
-  background: linear-gradient(135deg, #FF6B35 0%, #E63946 100%);
+  background: var(--primary-gradient);
   color: white;
 }
 
@@ -22,7 +22,7 @@
 
 .card-header {
   padding: 20px;
-  border-bottom: 1px solid #E9ECEF;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -35,13 +35,13 @@
 .card-title {
   font-size: 18px;
   font-weight: 700;
-  color: #073B4C;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .card-subtitle {
   font-size: 13px;
-  color: #6C757D;
+  color: var(--text-secondary);
   margin: 4px 0 0 0;
 }
 

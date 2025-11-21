@@ -4,6 +4,47 @@
   box-sizing: border-box;
 }
 
+/* CSS Variables for Theming */
+:root[data-theme="light"] {
+  --bg-color: #F7F7F7;
+  --bg-light: #FFFFFF;
+  --bg-dark: #E9ECEF;
+  --text-primary: #073B4C;
+  --text-secondary: #6C757D;
+  --border-color: #E9ECEF;
+  --shadow-color: rgba(0, 0, 0, 0.08);
+  --primary-color: #FF6B35;
+  --primary-dark: #E63946;
+  --primary-light: #FF8C42;
+  --primary-gradient: linear-gradient(135deg, #FF6B35 0%, #E63946 100%);
+  --warning-bg: #FFF9E6;
+  --warning-color: #FFD166;
+  --danger-bg: #FFEEF2;
+  --danger-color: #EF476F;
+  --success-bg: #E7F9F3;
+  --success-color: #06D6A0;
+}
+
+:root[data-theme="dark"] {
+  --bg-color: #1a1a2e;
+  --bg-light: #16213e;
+  --bg-dark: #0f1419;
+  --text-primary: #eee;
+  --text-secondary: #aaa;
+  --border-color: #2d3748;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --primary-color: #FF6B35;
+  --primary-dark: #E63946;
+  --primary-light: #FF8C42;
+  --primary-gradient: linear-gradient(135deg, #FF6B35 0%, #E63946 100%);
+  --warning-bg: #4a3800;
+  --warning-color: #FFD166;
+  --danger-bg: #4a1625;
+  --danger-color: #EF476F;
+  --success-bg: #0a3d2e;
+  --success-color: #06D6A0;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -11,8 +52,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #F7F7F7;
-  color: #073B4C;
+  background: var(--bg-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 code {
@@ -27,11 +69,11 @@ code {
 }
 
 ::-webkit-scrollbar-track {
-  background: #F7F7F7;
+  background: var(--bg-dark);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #FF6B35 0%, #E63946 100%);
+  background: var(--primary-gradient);
   border-radius: 5px;
 }
 
@@ -69,7 +111,7 @@ code {
   font-family: inherit;
 }
 
-.Toastify__toast--success {
+/* .Toastify__toast--success {
   background: linear-gradient(135deg, #06D6A0 0%, #05c090 100%);
 }
 
@@ -84,7 +126,7 @@ code {
 .Toastify__toast--warning {
   background: #FFD166;
   color: #073B4C;
-}
+} */
 
 /* Loading spinner */
 .spinner {

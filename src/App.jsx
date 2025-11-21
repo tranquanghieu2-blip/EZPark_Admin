@@ -4,9 +4,11 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { isAuthenticated, autoLogin } from './services/authService';
+import { ThemeProvider } from './context/ThemeContext';
 import Layout from './components/layout/Layout/Layout';
 import Login from './pages/Login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
+import Profile from './pages/Profile/Profile';
 import ParkingList from './pages/ParkingLot/ParkingList/ParkingList';
 import ParkingForm from './pages/ParkingLot/ParkingForm/ParkingForm';
 import RestrictedList from './pages/RestrictedZone/RestrictedList/RestrictedList';
@@ -34,7 +36,7 @@ function App() {
   }, []);
 
   return (
-    <>
+    <ThemeProvider>
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
@@ -54,6 +56,17 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <Dashboard />
+                </Layout>
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path={ROUTES.PROFILE} 
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Profile />
                 </Layout>
               </ProtectedRoute>
             } 
@@ -164,7 +177,7 @@ function App() {
         pauseOnHover
         theme="light"
       />
-    </>
+    </ThemeProvider>
   );
 }
 
