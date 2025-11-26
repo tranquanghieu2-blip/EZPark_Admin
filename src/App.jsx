@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { isAuthenticated, autoLogin } from './services/authService';
+import { isAuthenticated } from './services/authService';
 import { ThemeProvider } from './context/ThemeContext';
 import Layout from './components/layout/Layout/Layout';
 import Login from './pages/Login/Login';
@@ -28,12 +28,6 @@ const PublicRoute = ({ children }) => {
 };
 
 function App() {
-  // Auto login khi khởi động app (chỉ dùng trong development)
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      autoLogin();
-    }
-  }, []);
 
   return (
     <ThemeProvider>

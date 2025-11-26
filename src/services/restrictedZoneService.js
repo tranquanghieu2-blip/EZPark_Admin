@@ -1,11 +1,19 @@
 import axiosInstance from './axios';
 
 // Get all restricted zones
-export const getAllRestrictedZones = async (params = {}) => {
+export const getAllRestrictedZones = async ({
+  pageNumber = 1,
+  pageSize = 10,
+  search = "",
+}) => {
   try {
-    const response = await axiosInstance.get('/restricted-zones', { params });
+    const response = await axiosInstance.get("no-parking-routes/list", {
+      params: { pageNumber, pageSize }
+    });
+
     return response.data;
   } catch (error) {
+    console.error("Error fetching restricted zones:", error);
     throw error;
   }
 };

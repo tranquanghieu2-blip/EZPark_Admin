@@ -27,8 +27,8 @@ export const COLORS = {
   shadowLight: 'rgba(255, 107, 53, 0.1)',
 };
 
-// API Base URL (thay đổi theo môi trường thực tế)
-export const API_BASE_URL = 'http://localhost:5000/api';
+// API Base URL (lấy từ biến môi trường)
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://ezpark-9gnn.onrender.com/api/';
 
 // Routes
 export const ROUTES = {
@@ -37,10 +37,10 @@ export const ROUTES = {
   PROFILE: '/profile',
   
   // Parking Lots
-  PARKING_LIST: '/parking-lots',
-  PARKING_DETAIL: '/parking-lots/:id',
-  PARKING_CREATE: '/parking-lots/new',
-  PARKING_EDIT: '/parking-lots/:id/edit',
+  PARKING_LIST: '/parking-spots',
+  PARKING_DETAIL: '/parking-spots/:id',
+  PARKING_CREATE: '/parking-spots/new',
+  PARKING_EDIT: '/parking-spots/:id/edit',
   
   // Restricted Zones
   RESTRICTED_LIST: '/restricted-zones',

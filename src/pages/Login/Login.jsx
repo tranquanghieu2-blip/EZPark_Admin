@@ -11,8 +11,8 @@ import './Login.css';
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: 'admin',
-    password: '123456',
+    username: '',
+    password: '',
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -24,31 +24,33 @@ const Login = () => {
 
   const validate = () => {
     const newErrors = {};
-    
+
     if (!formData.username.trim()) {
       newErrors.username = 'Vui lòng nhập tên đăng nhập';
     }
-    
+
     if (!formData.password) {
       newErrors.password = 'Vui lòng nhập mật khẩu';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validate()) return;
-    
+
     setLoading(true);
     try {
       const response = await login(formData.username, formData.password);
-      toast.success('Đăng nhập thành công!');
-      navigate(ROUTES.DASHBOARD);
+      if (response.success === true) {
+        toast.success('Đăng nhập thành công!');
+        navigate(ROUTES.DASHBOARD);
+      }
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Tên đăng nhập hoặc mật khẩu không đúng!';
       toast.error(errorMessage);

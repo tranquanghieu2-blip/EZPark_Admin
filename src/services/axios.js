@@ -7,30 +7,26 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // QUAN TRỌNG: gửi cookie qua mọi request
 });
 
-// Request interceptor to add token
+
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+    return config; 
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle errors
+// Response interceptor
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
-      localStorage.removeItem(STORAGE_KEYS.TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.USER);
+      // Chỉ clear user (sessionStorage)
+      sessionStorage.removeItem(STORAGE_KEYS.USER);
+
+      // Redirect về login
       window.location.href = '/login';
     }
     return Promise.reject(error);
