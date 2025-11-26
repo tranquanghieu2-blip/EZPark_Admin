@@ -4,72 +4,47 @@ import { STORAGE_KEYS } from '../constants';
 // Login
 export const login = async (username, password) => {
   try {
-    // Mock login - tự động đăng nhập thành công
-    const mockResponse = {
-      token: 'mock-jwt-token-' + Date.now(),
-      user: {
-        id: 1,
-        name: 'Admin',
-        username: username || 'admin',
-        email: 'admin@ezpark.com',
-        role: 'Administrator',
-      },
-    };
-    
-    // Lưu token và thông tin user vào localStorage
-    localStorage.setItem(STORAGE_KEYS.TOKEN, mockResponse.token);
-    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(mockResponse.user));
-    
-    return mockResponse;
-    
-    // Khi có API thực, uncomment code dưới và xóa mock code trên
-    /*
-    const response = await axiosInstance.post('/auth/login', {
-      username,
-      password,
-    });
-    
-    if (response.data.token) {
-      localStorage.setItem(STORAGE_KEYS.TOKEN, response.data.token);
-      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data.user));
+    const response = await axiosInstance.post(
+      '/admin/login',
+      { username, password },
+      { withCredentials: true }
+    );
+
+    if (response.data.success && response.data.admin) {
+      sessionStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data.admin));
     }
-    
+
     return response.data;
-    */
   } catch (error) {
+    console.error("Login error:", error.response?.data?.message || error.message);
     throw error;
   }
 };
 
-// Auto login for development
-export const autoLogin = () => {
-  const mockUser = {
-    id: 1,
-    name: 'Admin',
-    username: 'admin',
-    email: 'admin@ezpark.com',
-    role: 'Administrator',
-  };
-  
-  localStorage.setItem(STORAGE_KEYS.TOKEN, 'mock-jwt-token-auto-' + Date.now());
-  localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(mockUser));
-};
 
 // Logout
-export const logout = () => {
-  localStorage.removeItem(STORAGE_KEYS.TOKEN);
-  localStorage.removeItem(STORAGE_KEYS.USER);
+export const logout = async () => {
+  try {
+    // Gọi API logout để xóa cookie từ server
+    await axiosInstance.post('/admin/logout', {}, { withCredentials: true });
+  } catch (error) {
+    console.error('Logout error:', error);
+  } finally {
+    // Xóa thông tin user khỏi sessionStorage
+    sessionStorage.removeItem(STORAGE_KEYS.USER);
+  }
 };
 
 // Get current user
 export const getCurrentUser = () => {
-  const userStr = localStorage.getItem(STORAGE_KEYS.USER);
+  const userStr = sessionStorage.getItem(STORAGE_KEYS.USER);
   return userStr ? JSON.parse(userStr) : null;
 };
 
 // Check if user is authenticated
+// Kiểm tra xem có thông tin user trong session không
 export const isAuthenticated = () => {
-  return !!localStorage.getItem(STORAGE_KEYS.TOKEN);
+  return !!sessionStorage.getItem(STORAGE_KEYS.USER);
 };
 
 // Change password

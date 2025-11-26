@@ -1,5 +1,7 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { logout } from '../../../services/authService';
 import { ROUTES } from '../../../constants';
 import './Sidebar.css';
 import { 
@@ -12,6 +14,15 @@ import {
 } from 'react-icons/fa';
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    if (window.confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+      await logout();
+      toast.success('Đăng xuất thành công!');
+      navigate(ROUTES.LOGIN);
+    }
+  };
   const menuItems = [
     {
       path: ROUTES.DASHBOARD,
@@ -71,7 +82,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         </nav>
 
         <div className="sidebar-footer">
-          <button className="sidebar-logout">
+          <button className="sidebar-logout" onClick={handleLogout}>
             <FaSignOutAlt />
             <span>Đăng xuất</span>
           </button>

@@ -1,70 +1,29 @@
-import axiosInstance from './axios';
+// parkingService.js
+import axiosInstance from "./axios";
 
-// Get all parking lots
-export const getAllParkingLots = async (params = {}) => {
+// Get all parking spots with pagination
+export const getAllParkingSpots = async ({
+  pageNumber = 1,
+  pageSize = 10,
+  search = "",
+}) => {
   try {
-    const response = await axiosInstance.get('/parking-lots', { params });
+    const response = await axiosInstance.get("parking-spots/list", {
+      params: { pageNumber, pageSize }
+    });
+
     return response.data;
   } catch (error) {
+    console.error("Error fetching parking spots:", error);
     throw error;
   }
 };
 
-// Get parking lot by ID
-export const getParkingLotById = async (id) => {
+// Delete parking spot
+export const deleteParkingSpot = async (id) => {
   try {
-    const response = await axiosInstance.get(`/parking-lots/${id}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// Create new parking lot
-export const createParkingLot = async (data) => {
-  try {
-    const response = await axiosInstance.post('/parking-lots', data);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// Update parking lot
-export const updateParkingLot = async (id, data) => {
-  try {
-    const response = await axiosInstance.put(`/parking-lots/${id}`, data);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// Delete parking lot
-export const deleteParkingLot = async (id) => {
-  try {
-    const response = await axiosInstance.delete(`/parking-lots/${id}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// Get parking statistics
-export const getParkingStatistics = async () => {
-  try {
-    const response = await axiosInstance.get('/parking-lots/statistics');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// Add new parking type
-export const addParkingType = async (typeName) => {
-  try {
-    const response = await axiosInstance.post('/parking-lots/types', {
-      name: typeName,
+    const response = await axiosInstance.delete(`/parking-spots/${id}`, {
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {
@@ -72,10 +31,30 @@ export const addParkingType = async (typeName) => {
   }
 };
 
-// Get all parking types
-export const getParkingTypes = async () => {
+// Get parking spot by ID
+export const getParkingSpotById = async (id) => {
   try {
-    const response = await axiosInstance.get('/parking-lots/types');
+    const response = await axiosInstance.get(`/parking-spots/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Create new parking spot
+export const createParkingSpot = async (data) => {
+  try {
+    const response = await axiosInstance.post("/parking-spots", data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Update parking spot
+export const updateParkingSpot = async (id, data) => {
+  try {
+    const response = await axiosInstance.put(`/parking-spots/${id}`, data);
     return response.data;
   } catch (error) {
     throw error;

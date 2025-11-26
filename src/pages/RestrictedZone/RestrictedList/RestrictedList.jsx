@@ -2,49 +2,58 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FaPlus, FaEye, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
+
 import Card from '../../../components/common/Card/Card';
 import Button from '../../../components/common/Button/Button';
 import Table from '../../../components/common/Table/Table';
 import Input from '../../../components/common/Input/Input';
 import Modal from '../../../components/common/Modal/Modal';
+import Pagination from '../../../components/common/Pagination/Pagination';
+
 import { getAllRestrictedZones, deleteRestrictedZone } from '../../../services/restrictedZoneService';
 import { ROUTES } from '../../../constants';
+
 import './RestrictedList.css';
 
 const RestrictedList = () => {
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   const [zones, setZones] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, name: '' });
+
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    id: null,
+    name: '',
+  });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchZones();
-  }, []);
+  }, [currentPage, searchTerm]);
 
   const fetchZones = async () => {
+    setLoading(true);
     try {
-      const mockData = [
-        {
-          id: 1,
-          type: 'Cấm đỗ',
-          streetName: 'Đường Lê Duẩn',
-          side: 'Cả hai bên',
-          description: 'Cấm đỗ toàn tuyến',
-        },
-        {
-          id: 2,
-          type: 'Cấm dừng đỗ',
-          streetName: 'Đường Trần Phú',
-          side: 'Bên phải',
-          description: 'Cấm dừng đỗ từ 6h-22h',
-        },
-      ];
-      
-      setZones(mockData);
-      setLoading(false);
+      const res = await getAllRestrictedZones({
+        pageNumber: currentPage,
+        pageSize: itemsPerPage,
+        search: searchTerm,
+      });
+
+      if (res.success) {
+        setZones(res.data || []);
+        setTotalPages(res.pagination?.totalPages || 1);
+        setTotalItems(res.pagination?.totalItems || 0);
+      }
     } catch (error) {
-      toast.error('Không thể tải danh sách tuyến cấm');
+      toast.error("Không thể tải danh sách tuyến cấm");
+    } finally {
       setLoading(false);
     }
   };
@@ -52,59 +61,75 @@ const RestrictedList = () => {
   const handleDelete = async () => {
     try {
       await deleteRestrictedZone(deleteModal.id);
-      toast.success('Đã xóa tuyến cấm thành công!');
+      toast.success("Đã xóa tuyến cấm thành công!");
+
       setDeleteModal({ isOpen: false, id: null, name: '' });
-      fetchZones();
+
+      if (zones.length === 1 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      } else {
+        fetchZones();
+      }
+
     } catch (error) {
-      toast.error('Không thể xóa tuyến cấm');
+      toast.error("Không thể xóa tuyến cấm");
     }
   };
 
   const filteredData = zones.filter(item =>
-    item.streetName.toLowerCase().includes(searchTerm.toLowerCase())
+    item.street.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
 
   const columns = [
     {
-      header: 'Tên đường',
-      key: 'streetName',
+      header: "Tên đường",
+      key: "street",
       render: (value) => <strong>{value}</strong>,
     },
     {
-      header: 'Loại cấm',
-      key: 'type',
+      header: "Loại cấm",
+      key: "type",
       render: (value) => <span className="badge badge-danger">{value}</span>,
     },
     {
-      header: 'Bên cấm',
-      key: 'side',
+      header: "Bên cấm",
+      key: "side",
     },
     {
-      header: 'Mô tả',
-      key: 'description',
+      header: "Mô tả",
+      key: "description",
     },
     {
-      header: 'Thao tác',
-      key: 'id',
-      align: 'center',
-      width: '200px',
+      header: "Thao tác",
+      key: "no_parking_route_id",
+      align: "center",
+      width: "200px",
       render: (id, row) => (
         <div className="table-actions">
-          <button 
+          <button
             className="action-btn action-btn-primary"
             onClick={() => navigate(`/restricted-zones/${id}`)}
           >
             <FaEye />
           </button>
-          <button 
+
+          <button
             className="action-btn action-btn-primary"
             onClick={() => navigate(`/restricted-zones/${id}/edit`)}
           >
             <FaEdit />
           </button>
-          <button 
+
+          <button
             className="action-btn action-btn-danger"
-            onClick={() => setDeleteModal({ isOpen: true, id, name: row.streetName })}
+            onClick={() =>
+              setDeleteModal({ isOpen: true, id, name: row.street })
+            }
           >
             <FaTrash />
           </button>
@@ -120,8 +145,8 @@ const RestrictedList = () => {
           <h1 className="page-title">Quản lý tuyến cấm</h1>
           <p className="page-subtitle">Danh sách các tuyến đường cấm dừng/đỗ</p>
         </div>
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           icon={<FaPlus />}
           onClick={() => navigate(ROUTES.RESTRICTED_CREATE)}
         >
@@ -135,7 +160,7 @@ const RestrictedList = () => {
             type="text"
             placeholder="Tìm kiếm theo tên đường..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
             icon={<FaSearch />}
           />
         </div>
@@ -146,16 +171,31 @@ const RestrictedList = () => {
           loading={loading}
           emptyMessage="Không tìm thấy tuyến cấm nào"
         />
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+        />
       </Card>
 
       <Modal
         isOpen={deleteModal.isOpen}
-        onClose={() => setDeleteModal({ isOpen: false, id: null, name: '' })}
+        onClose={() =>
+          setDeleteModal({ isOpen: false, id: null, name: '' })
+        }
         title="Xác nhận xóa"
         size="small"
         footer={
           <>
-            <Button variant="ghost" onClick={() => setDeleteModal({ isOpen: false, id: null, name: '' })}>
+            <Button
+              variant="ghost"
+              onClick={() =>
+                setDeleteModal({ isOpen: false, id: null, name: '' })
+              }
+            >
               Hủy
             </Button>
             <Button variant="danger" onClick={handleDelete}>
@@ -164,7 +204,13 @@ const RestrictedList = () => {
           </>
         }
       >
-        <p>Bạn có chắc chắn muốn xóa tuyến cấm <strong>{deleteModal.name}</strong>?</p>
+        <p>
+          Bạn có chắc chắn muốn xóa tuyến cấm{" "}
+          <strong>{deleteModal.name}</strong>?
+        </p>
+        <p style={{ marginTop: 8, color: "#EF476F" }}>
+          Hành động này không thể hoàn tác!
+        </p>
       </Modal>
     </div>
   );

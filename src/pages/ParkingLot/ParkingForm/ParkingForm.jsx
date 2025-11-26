@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FaSave, FaArrowLeft } from 'react-icons/fa';
 import Card from '../../../components/common/Card/Card';
 import Button from '../../../components/common/Button/Button';
 import Input from '../../../components/common/Input/Input';
-import { createParkingLot, updateParkingLot, getParkingLotById } from '../../../services/parkingService';
+import { createParkingSpot, updateParkingSpot } from '../../../services/parkingService';
 import { PARKING_TYPES, ROUTES } from '../../../constants';
 import './ParkingForm.css';
 
 const ParkingForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
   const isEdit = !!id;
+  
+  // Nhận data từ navigate state
+  const parkingDataFromState = location.state?.parkingData;
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -30,29 +34,25 @@ const ParkingForm = () => {
   const [newType, setNewType] = useState('');
 
   useEffect(() => {
-    if (isEdit) {
-      fetchParkingLot();
+    if (isEdit && parkingDataFromState) {
+      // Nếu có data từ state, dùng trực tiếp không cần gọi API
+      setFormData({
+        name: parkingDataFromState.street || '',
+        type: parkingDataFromState.type || '',
+        capacity: parkingDataFromState.capacity || '',
+        address: parkingDataFromState.address || '',
+        description: parkingDataFromState.description || '',
+        lat: parkingDataFromState.location_begin?.latitude || '',
+        lng: parkingDataFromState.location_begin?.longitude || '',
+        // Thêm các field khác nếu cần
+        ...parkingDataFromState
+      });
+    } else if (isEdit && !parkingDataFromState) {
+      // Nếu không có data trong state (user refresh page), redirect về list
+      toast.warning('Vui lòng chọn bãi đỗ từ danh sách');
+      navigate(ROUTES.PARKING_LIST);
     }
-  }, [id]);
-
-  const fetchParkingLot = async () => {
-    try {
-      // Dữ liệu mẫu
-      const mockData = {
-        id: 1,
-        name: 'Bãi đỗ xe TTTM Indochina',
-        type: 'Bãi đỗ công cộng',
-        capacity: 200,
-        address: '234 Trần Phú, Hải Châu, Đà Nẵng',
-        description: 'Bãi đỗ xe rộng rãi, an toàn',
-        lat: 16.0471,
-        lng: 108.2068,
-      };
-      setFormData(mockData);
-    } catch (error) {
-      toast.error('Không thể tải thông tin bãi đỗ xe');
-    }
-  };
+  }, [id, parkingDataFromState]);
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -80,15 +80,16 @@ const ParkingForm = () => {
     setLoading(true);
     try {
       if (isEdit) {
-        await updateParkingLot(id, formData);
+        await updateParkingSpot(id, formData);
         toast.success('Cập nhật bãi đỗ xe thành công!');
       } else {
-        await createParkingLot(formData);
+        await createParkingSpot(formData);
         toast.success('Thêm bãi đỗ xe mới thành công!');
       }
       navigate(ROUTES.PARKING_LIST);
     } catch (error) {
-      toast.error('Có lỗi xảy ra. Vui lòng thử lại!');
+      const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
