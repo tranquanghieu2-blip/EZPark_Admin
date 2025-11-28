@@ -2,13 +2,13 @@ import axiosInstance from './axios';
 
 // Get all restricted zones
 export const getAllRestrictedZones = async ({
-  pageNumber = 1,
+  pageNumber,
   pageSize = 10,
-  search = "",
+  query = "",
 }) => {
   try {
     const response = await axiosInstance.get("no-parking-routes/list", {
-      params: { pageNumber, pageSize }
+      params: { pageNumber, pageSize, query }
     });
 
     return response.data;
@@ -21,7 +21,7 @@ export const getAllRestrictedZones = async ({
 // Get restricted zone by ID
 export const getRestrictedZoneById = async (id) => {
   try {
-    const response = await axiosInstance.get(`/restricted-zones/${id}`);
+    const response = await axiosInstance.get(`/no-parking-routes/${id}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -31,7 +31,8 @@ export const getRestrictedZoneById = async (id) => {
 // Create new restricted zone
 export const createRestrictedZone = async (data) => {
   try {
-    const response = await axiosInstance.post('/restricted-zones', data);
+    console.log("Creating restricted zone with data:", data);
+    const response = await axiosInstance.post('/no-parking-routes', data);
     return response.data;
   } catch (error) {
     throw error;
@@ -41,7 +42,7 @@ export const createRestrictedZone = async (data) => {
 // Update restricted zone
 export const updateRestrictedZone = async (id, data) => {
   try {
-    const response = await axiosInstance.put(`/restricted-zones/${id}`, data);
+    const response = await axiosInstance.put(`/no-parking-routes/${id}`, data);
     return response.data;
   } catch (error) {
     throw error;
@@ -51,7 +52,7 @@ export const updateRestrictedZone = async (id, data) => {
 // Delete restricted zone
 export const deleteRestrictedZone = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/restricted-zones/${id}`);
+    const response = await axiosInstance.delete(`/no-parking-routes/${id}`);
     return response.data;
   } catch (error) {
     throw error;

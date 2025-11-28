@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { isAuthenticated } from './services/authService';
 import { ThemeProvider } from './context/ThemeContext';
+import { useActivityTracker } from './hooks/useActivityTracker';
 import Layout from './components/layout/Layout/Layout';
 import Login from './pages/Login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
@@ -17,8 +18,11 @@ import FeedbackList from './pages/Feedback/FeedbackList';
 import UserList from './pages/User/UserList';
 import { ROUTES } from './constants';
 
-// Protected Route Component
+// Protected Route Component with Activity Tracker
 const ProtectedRoute = ({ children }) => {
+  // Hook để theo dõi hoạt động và auto logout
+  useActivityTracker();
+  
   return isAuthenticated() ? children : <Navigate to={ROUTES.LOGIN} />;
 };
 

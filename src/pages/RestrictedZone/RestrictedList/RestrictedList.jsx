@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FaPlus, FaEye, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
 
@@ -11,12 +11,14 @@ import Modal from '../../../components/common/Modal/Modal';
 import Pagination from '../../../components/common/Pagination/Pagination';
 
 import { getAllRestrictedZones, deleteRestrictedZone } from '../../../services/restrictedZoneService';
-import { ROUTES } from '../../../constants';
+import { ROUTES, RESTRICTED_TYPE_OPTIONS, RESTRICTED_SIDE_OPTIONS } from '../../../constants';
 
 import './RestrictedList.css';
+import { set } from 'date-fns';
 
 const RestrictedList = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [loading, setLoading] = useState(true);
   const [zones, setZones] = useState([]);
@@ -33,6 +35,42 @@ const RestrictedList = () => {
   const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 10;
 
+  // Kiểm tra nếu có returnPage từ navigate state (sau khi edit hoặc create)
+  useEffect(() => {
+    if (location.state?.returnPage) {
+      const returnPage = location.state.returnPage;
+
+      if (returnPage === 'last') {
+        // Fetch để lấy totalPages, sau đó set về trang cuối
+        fetchRestrictedZonesForLastPage();
+      } else {
+        setCurrentPage(returnPage);
+      }
+
+      // Clear state sau khi đã sử dụng
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
+  const fetchRestrictedZonesForLastPage = async () => {
+    setLoading(true);
+    try {
+      const res = await getAllRestrictedZones({
+        pageNumber: 1,
+        pageSize: itemsPerPage,
+        query: searchTerm,
+      });
+
+      if (res.success) {
+        const lastPage = res.pagination?.totalPages || 1;
+        setCurrentPage(lastPage);
+      }
+    } catch (error) {
+      console.error("Error fetching last page:", error);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     fetchZones();
   }, [currentPage, searchTerm]);
@@ -43,7 +81,7 @@ const RestrictedList = () => {
       const res = await getAllRestrictedZones({
         pageNumber: currentPage,
         pageSize: itemsPerPage,
-        search: searchTerm,
+        query: searchTerm,
       });
 
       if (res.success) {
@@ -53,6 +91,7 @@ const RestrictedList = () => {
       }
     } catch (error) {
       toast.error("Không thể tải danh sách tuyến cấm");
+      setZones([]);
     } finally {
       setLoading(false);
     }
@@ -94,15 +133,23 @@ const RestrictedList = () => {
     {
       header: "Loại cấm",
       key: "type",
-      render: (value) => <span className="badge badge-danger">{value}</span>,
+      render: (value) => {
+        const typeOption = RESTRICTED_TYPE_OPTIONS.find(opt => opt.value === value);
+        return typeOption ? <span className="badge badge-danger">{typeOption.label}</span> : value;
+      }
     },
     {
       header: "Bên cấm",
       key: "side",
+      render: (value) => {
+        const sideOption = RESTRICTED_SIDE_OPTIONS.find(opt => opt.value === value);
+        return sideOption ? <span className="badge badge-primary">{sideOption.label}</span> : value;
+      }
     },
     {
       header: "Mô tả",
       key: "description",
+      render: (value) => value || <em>Không có</em>,
     },
     {
       header: "Thao tác",
@@ -120,7 +167,13 @@ const RestrictedList = () => {
 
           <button
             className="action-btn action-btn-primary"
-            onClick={() => navigate(`/restricted-zones/${id}/edit`)}
+            onClick={() => navigate(`/restricted-zones/${id}/edit`, { 
+              state: { 
+                restrictedData: row,
+                currentPage: currentPage // Truyền trang hiện tại để quay lại
+              } 
+            })}
+            title="Chỉnh sửa"
           >
             <FaEdit />
           </button>
@@ -167,7 +220,7 @@ const RestrictedList = () => {
 
         <Table
           columns={columns}
-          data={filteredData}
+          data={zones}
           loading={loading}
           emptyMessage="Không tìm thấy tuyến cấm nào"
         />
