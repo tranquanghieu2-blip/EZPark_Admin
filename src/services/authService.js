@@ -5,7 +5,7 @@ import { STORAGE_KEYS } from '../constants';
 export const login = async (username, password) => {
   try {
     const response = await axiosInstance.post(
-      '/admin/login',
+      'login',
       { username, password },
       { withCredentials: true }
     );
@@ -26,7 +26,7 @@ export const login = async (username, password) => {
 export const logout = async () => {
   try {
     // Gọi API logout để xóa cookie từ server
-    await axiosInstance.post('/admin/logout', {}, { withCredentials: true });
+    await axiosInstance.post('logout', {}, { withCredentials: true });
   } catch (error) {
     console.error('Logout error:', error);
   } finally {
@@ -45,6 +45,17 @@ export const getCurrentUser = () => {
 // Kiểm tra xem có thông tin user trong session không
 export const isAuthenticated = () => {
   return !!sessionStorage.getItem(STORAGE_KEYS.USER);
+};
+
+// Ping API - check session
+export const ping = async () => {
+  try {
+    const response = await axiosInstance.get('/ping', { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    console.error('Ping error:', error);
+    throw error;
+  }
 };
 
 // Change password

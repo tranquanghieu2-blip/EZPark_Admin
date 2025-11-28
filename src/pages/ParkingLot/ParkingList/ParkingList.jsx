@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FaPlus, FaEye, FaEdit, FaTrash, FaSearch } from "react-icons/fa";
 
@@ -17,11 +17,13 @@ import {
 
 import { formatNumber } from "../../../utils/helpers";
 import { ROUTES } from "../../../constants";
+import { TYPE_OPTIONS } from "../../../constants";
 
 import "./ParkingList.css";
 
 const ParkingList = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [loading, setLoading] = useState(true);
   const [parkingSpots, setParkingSpots] = useState([]);
@@ -39,23 +41,58 @@ const ParkingList = () => {
   const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 10;
 
+  // Kiểm tra nếu có returnPage từ navigate state (sau khi edit hoặc create)
+  useEffect(() => {
+    if (location.state?.returnPage) {
+      const returnPage = location.state.returnPage;
+ 
+      if (returnPage === 'last') {
+        // Fetch để lấy totalPages, sau đó set về trang cuối
+        fetchParkingSpotsForLastPage();
+      } else {
+        setCurrentPage(returnPage);
+      }
+      
+      // Clear state sau khi đã sử dụng
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
+  const fetchParkingSpotsForLastPage = async () => {
+    setLoading(true);
+    try {
+      const res = await getAllParkingSpots({
+        pageNumber: 1,
+        pageSize: itemsPerPage,
+        query: searchTerm,
+      });
+
+      if (res.success) {
+        const lastPage = res.pagination?.totalPages || 1;
+        setCurrentPage(lastPage);
+      }
+    } catch (error) {
+      console.error("Error fetching last page:", error);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     fetchParkingSpots();
   }, [currentPage, searchTerm]);
 
   const fetchParkingSpots = async () => {
     setLoading(true);
-
+    console.log("Fetching parking spots for page:", currentPage);
     try {
       const res = await getAllParkingSpots({
         pageNumber: currentPage,
         pageSize: itemsPerPage,
-        search: searchTerm,
+        query: searchTerm,
       });
 
       if (res.success) {
         setParkingSpots(res.data || []);
-
         setTotalPages(res.pagination?.totalPages || 1);
         setTotalItems(res.pagination?.totalItems || 0);
       }
@@ -87,10 +124,6 @@ const ParkingList = () => {
     }
   };
 
-  const filteredData = parkingSpots.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.address.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -106,7 +139,12 @@ const ParkingList = () => {
     {
       header: "Loại",
       key: "type",
+      render: (val) => {
+        const option = TYPE_OPTIONS.find(opt => opt.value === val);
+        return <span>{option ? option.label : val}</span>;
+      },
     },
+
     {
       header: "Sức chứa",
       key: "capacity",
@@ -136,7 +174,12 @@ const ParkingList = () => {
 
           <button
             className="action-btn action-btn-primary"
-            onClick={() => navigate(`/parking-spots/${id}/edit`, { state: { parkingData: row } })}
+            onClick={() => navigate(`/parking-spots/${id}/edit`, { 
+              state: { 
+                parkingData: row,
+                currentPage: currentPage // Truyền trang hiện tại để quay lại
+              } 
+            })}
             title="Chỉnh sửa"
           >
             <FaEdit />

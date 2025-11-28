@@ -28,7 +28,7 @@ export const COLORS = {
 };
 
 // API Base URL (lấy từ biến môi trường)
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://ezpark-9gnn.onrender.com/api/';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://ezpark-9gnn.onrender.com/api/admin/';
 
 // Routes
 export const ROUTES = {
@@ -59,23 +59,33 @@ export const ROUTES = {
 
 // Loại bãi đỗ xe
 export const PARKING_TYPES = [
-  'Bãi đỗ công cộng',
-  'Bãi đỗ tư nhân',
-  'Bãi đỗ ven đường',
-  'Bãi đỗ trong nhà',
-  'Bãi đỗ ngoài trời',
-  'Bãi đỗ xe máy',
-  'Bãi đỗ ô tô',
-  'Bãi đỗ hỗn hợp',
+  'Bãi đỗ xe tập trung',
+  'Bãi đỗ xe ven đường',
 ];
+
+export const TYPE_OPTIONS = [
+  { value: "parking hub", label: "Bãi đỗ xe tập trung" },
+  { value: "on street parking", label: "Bãi đỗ xe ven đường" },
+];
+
+export const RESTRICTED_TYPE_OPTIONS = [
+  { value: "no parking", label: "Cấm đỗ" },
+  { value: "no stopping", label: "Cấm dừng" },
+  { value: "alternate days", label: "Cấm đỗ chẵn lẻ" },
+];
+
+export const RESTRICTED_SIDE_OPTIONS = [
+  { value: "odd", label: "Bên lẻ" },
+  { value: "even", label: "Bên chẵn" },
+  { value: "both", label: "Cả hai bên" },
+];
+
 
 // Loại cấm
 export const RESTRICTED_TYPES = [
   'Cấm đỗ',
   'Cấm dừng',
-  'Cấm đỗ theo giờ',
-  'Cấm dừng đỗ',
-  'Cấm theo ngày',
+  'Cấm ngày chẵn/lẻ'
 ];
 
 // Bên cấm
@@ -83,7 +93,6 @@ export const RESTRICTED_SIDES = [
   'Bên trái',
   'Bên phải',
   'Cả hai bên',
-  'Giữa đường',
 ];
 
 // Từ ngữ vi phạm (để cảnh báo trong feedback)

@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import './Card.css';
 
-const Card = ({ 
+const Card = forwardRef(({ 
   title,
   subtitle,
   children,
   headerAction = null,
   className = '',
   gradient = false,
-}) => {
+}, ref) => {
   return (
-    <div className={`card ${gradient ? 'card-gradient' : ''} ${className}`}>
+    <div className={`card ${gradient ? 'card-gradient' : ''} ${className}`} ref={ref}>
       {(title || headerAction) && (
         <div className="card-header">
           <div>
@@ -25,6 +25,6 @@ const Card = ({
       </div>
     </div>
   );
-};
+});
 
 export default Card;

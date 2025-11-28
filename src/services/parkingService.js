@@ -3,13 +3,13 @@ import axiosInstance from "./axios";
 
 // Get all parking spots with pagination
 export const getAllParkingSpots = async ({
-  pageNumber = 1,
+  pageNumber,
   pageSize = 10,
-  search = "",
+  query = "",
 }) => {
   try {
     const response = await axiosInstance.get("parking-spots/list", {
-      params: { pageNumber, pageSize }
+      params: { pageNumber, pageSize, query }
     });
 
     return response.data;
@@ -22,7 +22,7 @@ export const getAllParkingSpots = async ({
 // Delete parking spot
 export const deleteParkingSpot = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/parking-spots/${id}`, {
+    const response = await axiosInstance.delete(`/parking-spots/delete/${id}`, {
       withCredentials: true,
     });
     return response.data;
@@ -34,7 +34,7 @@ export const deleteParkingSpot = async (id) => {
 // Get parking spot by ID
 export const getParkingSpotById = async (id) => {
   try {
-    const response = await axiosInstance.get(`/parking-spots/${id}`);
+    const response = await axiosInstance.get(`parking-spots/add/${id}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -44,17 +44,18 @@ export const getParkingSpotById = async (id) => {
 // Create new parking spot
 export const createParkingSpot = async (data) => {
   try {
-    const response = await axiosInstance.post("/parking-spots", data);
+    const response = await axiosInstance.post("parking-spots/add", data);
     return response.data;
   } catch (error) {
     throw error;
+    console.log("Errpr creating parking spot:", error);
   }
 };
 
 // Update parking spot
 export const updateParkingSpot = async (id, data) => {
   try {
-    const response = await axiosInstance.put(`/parking-spots/${id}`, data);
+    const response = await axiosInstance.put(`parking-spots/update/${id}`, data);
     return response.data;
   } catch (error) {
     throw error;

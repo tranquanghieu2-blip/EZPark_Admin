@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import './Input.css';
 
-const Input = ({ 
+const Input = forwardRef(({ 
   label,
   type = 'text',
   placeholder = '',
@@ -12,9 +12,9 @@ const Input = ({
   required = false,
   icon = null,
   ...rest
-}) => {
+}, ref) => {
   return (
-    <div className="input-group">
+    <div className="input-group" ref={ref}>
       {label && (
         <label className="input-label">
           {label}
@@ -36,6 +36,8 @@ const Input = ({
       {error && <span className="input-error-text">{error}</span>}
     </div>
   );
-};
+});
+
+Input.displayName = 'Input';
 
 export default Input;
