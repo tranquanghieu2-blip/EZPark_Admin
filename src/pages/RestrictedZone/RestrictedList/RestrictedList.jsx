@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { FaPlus, FaEye, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
+import { FaPlus, FaEye, FaEdit, FaTrash, FaSearch, FaFileExcel } from 'react-icons/fa';
 
 import Card from '../../../components/common/Card/Card';
 import Button from '../../../components/common/Button/Button';
@@ -9,6 +9,7 @@ import Table from '../../../components/common/Table/Table';
 import Input from '../../../components/common/Input/Input';
 import Modal from '../../../components/common/Modal/Modal';
 import Pagination from '../../../components/common/Pagination/Pagination';
+import ImportRestrictedExcelModal from '../../../components/ImportRestrictedExcelModal/ImportRestrictedExcelModal';
 
 import { getAllRestrictedZones, deleteRestrictedZone } from '../../../services/restrictedZoneService';
 import { ROUTES, RESTRICTED_TYPE_OPTIONS, RESTRICTED_SIDE_OPTIONS } from '../../../constants';
@@ -29,6 +30,8 @@ const RestrictedList = () => {
     id: null,
     name: '',
   });
+
+  const [importModalOpen, setImportModalOpen] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -198,13 +201,22 @@ const RestrictedList = () => {
           <h1 className="page-title">Quản lý tuyến cấm</h1>
           <p className="page-subtitle">Danh sách các tuyến đường cấm dừng/đỗ</p>
         </div>
-        <Button
-          variant="primary"
-          icon={<FaPlus />}
-          onClick={() => navigate(ROUTES.RESTRICTED_CREATE)}
-        >
-          Thêm tuyến cấm mới
-        </Button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <Button
+            variant="outline"
+            icon={<FaFileExcel />}
+            onClick={() => setImportModalOpen(true)}
+          >
+            Import Excel
+          </Button>
+          <Button
+            variant="primary"
+            icon={<FaPlus />}
+            onClick={() => navigate(ROUTES.RESTRICTED_CREATE)}
+          >
+            Thêm tuyến cấm mới
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -265,6 +277,16 @@ const RestrictedList = () => {
           Hành động này không thể hoàn tác!
         </p>
       </Modal>
+
+      {/* Import Excel Modal */}
+      <ImportRestrictedExcelModal
+        isOpen={importModalOpen}
+        onClose={() => setImportModalOpen(false)}
+        onSuccess={() => {
+          setImportModalOpen(false);
+          fetchZones(); // Refresh list after import
+        }}
+      />
     </div>
   );
 };

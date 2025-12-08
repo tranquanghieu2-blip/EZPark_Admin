@@ -130,3 +130,18 @@ export const STATUS = {
   PENDING: 'pending',
   BLOCKED: 'blocked',
 };
+
+// Giới hạn vùng Đà Nẵng (dùng để validate tọa độ)
+export const DA_NANG_BOUNDS = {
+  north: 16.125,
+  south: 15.975,
+  east: 108.28,
+  west: 108.1,
+};
+
+export const DA_NANG_REGION = {
+  latitude: (DA_NANG_BOUNDS.north + DA_NANG_BOUNDS.south) / 2,
+  longitude: (DA_NANG_BOUNDS.east + DA_NANG_BOUNDS.west) / 2,
+  latitudeDelta: DA_NANG_BOUNDS.north - DA_NANG_BOUNDS.south,
+  longitudeDelta: DA_NANG_BOUNDS.east - DA_NANG_BOUNDS.west,
+};

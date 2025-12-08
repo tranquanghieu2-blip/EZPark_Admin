@@ -42,6 +42,7 @@ export const createRestrictedZone = async (data) => {
 // Update restricted zone
 export const updateRestrictedZone = async (id, data) => {
   try {
+    console.log("Updating restricted zone with data:", data);
     const response = await axiosInstance.put(`/no-parking-routes/${id}`, data);
     return response.data;
   } catch (error) {
