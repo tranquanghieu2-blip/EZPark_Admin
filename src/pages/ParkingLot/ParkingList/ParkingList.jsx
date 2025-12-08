@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FaPlus, FaEye, FaEdit, FaTrash, FaSearch } from "react-icons/fa";
+import { FaPlus, FaEye, FaEdit, FaTrash, FaSearch, FaFileExcel } from "react-icons/fa";
 
 import Card from "../../../components/common/Card/Card";
 import Button from "../../../components/common/Button/Button";
@@ -9,6 +9,7 @@ import Table from "../../../components/common/Table/Table";
 import Input from "../../../components/common/Input/Input";
 import Modal from "../../../components/common/Modal/Modal";
 import Pagination from "../../../components/common/Pagination/Pagination";
+import ImportExcelModal from "../../../components/ImportExcelModal/ImportExcelModal";
 
 import {
   getAllParkingSpots,
@@ -34,6 +35,8 @@ const ParkingList = () => {
     id: null,
     name: "",
   });
+
+  const [importModalOpen, setImportModalOpen] = useState(false);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -209,13 +212,22 @@ const ParkingList = () => {
           </p>
         </div>
 
-        <Button
-          variant="primary"
-          icon={<FaPlus />}
-          onClick={() => navigate(ROUTES.PARKING_CREATE)}
-        >
-          Thêm bãi đỗ mới
-        </Button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <Button
+            variant="outline"
+            icon={<FaFileExcel />}
+            onClick={() => setImportModalOpen(true)}
+          >
+            Import Excel
+          </Button>
+          <Button
+            variant="primary"
+            icon={<FaPlus />}
+            onClick={() => navigate(ROUTES.PARKING_CREATE)}
+          >
+            Thêm bãi đỗ mới
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -277,6 +289,16 @@ const ParkingList = () => {
           Hành động này không thể hoàn tác!
         </p>
       </Modal>
+
+      {/* Import Excel Modal */}
+      <ImportExcelModal
+        isOpen={importModalOpen}
+        onClose={() => setImportModalOpen(false)}
+        onSuccess={() => {
+          setImportModalOpen(false);
+          fetchParkingSpots(); // Refresh list after import
+        }}
+      />
     </div>
   );
 };

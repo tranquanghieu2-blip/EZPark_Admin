@@ -6,7 +6,8 @@ import Card from '../../../components/common/Card/Card';
 import Button from '../../../components/common/Button/Button';
 import Input from '../../../components/common/Input/Input';
 import { createRestrictedZone, updateRestrictedZone } from '../../../services/restrictedZoneService';
-import { RESTRICTED_TYPES, RESTRICTED_SIDES, ROUTES, RESTRICTED_TYPE_OPTIONS, RESTRICTED_SIDE_OPTIONS, USER_ROLES } from '../../../constants';
+import { RESTRICTED_TYPES, RESTRICTED_SIDES, ROUTES, RESTRICTED_TYPE_OPTIONS, RESTRICTED_SIDE_OPTIONS, USER_ROLES, DA_NANG_BOUNDS } from '../../../constants';
+import MapPicker from '../../../components/common/MapPicker/MapPicker';
 import './RestrictedForm.css';
 
 const RestrictedForm = () => {
@@ -145,6 +146,29 @@ const RestrictedForm = () => {
     if (!formData.startLng) newErrors.startLng = 'Vui lòng nhập kinh độ điểm bắt đầu';
     if (!formData.endLat) newErrors.endLat = 'Vui lòng nhập vĩ độ điểm kết thúc';
     if (!formData.endLng) newErrors.endLng = 'Vui lòng nhập kinh độ điểm kết thúc';
+    
+    // Validate start within Da Nang
+    if (formData.startLat) {
+      const n = Number(formData.startLat);
+      if (isNaN(n)) newErrors.startLat = 'Vĩ độ phải là số hợp lệ';
+      else if (n < DA_NANG_BOUNDS.south || n > DA_NANG_BOUNDS.north) newErrors.startLat = `Vĩ độ bắt đầu phải trong phạm vi Đà Nẵng (${DA_NANG_BOUNDS.south} - ${DA_NANG_BOUNDS.north})`;
+    }
+    if (formData.startLng) {
+      const n = Number(formData.startLng);
+      if (isNaN(n)) newErrors.startLng = 'Kinh độ phải là số hợp lệ';
+      else if (n < DA_NANG_BOUNDS.west || n > DA_NANG_BOUNDS.east) newErrors.startLng = `Kinh độ bắt đầu phải trong phạm vi Đà Nẵng (${DA_NANG_BOUNDS.west} - ${DA_NANG_BOUNDS.east})`;
+    }
+    // Validate end within Da Nang
+    if (formData.endLat) {
+      const n = Number(formData.endLat);
+      if (isNaN(n)) newErrors.endLat = 'Vĩ độ phải là số hợp lệ';
+      else if (n < DA_NANG_BOUNDS.south || n > DA_NANG_BOUNDS.north) newErrors.endLat = `Vĩ độ kết thúc phải trong phạm vi Đà Nẵng (${DA_NANG_BOUNDS.south} - ${DA_NANG_BOUNDS.north})`;
+    }
+    if (formData.endLng) {
+      const n = Number(formData.endLng);
+      if (isNaN(n)) newErrors.endLng = 'Kinh độ phải là số hợp lệ';
+      else if (n < DA_NANG_BOUNDS.west || n > DA_NANG_BOUNDS.east) newErrors.endLng = `Kinh độ kết thúc phải trong phạm vi Đà Nẵng (${DA_NANG_BOUNDS.west} - ${DA_NANG_BOUNDS.east})`;
+    }
     
     if (!formData.time_range || formData.time_range.length === 0) {
       newErrors.time_range = 'Vui lòng thêm ít nhất một mốc thời gian';
@@ -414,6 +438,20 @@ const RestrictedForm = () => {
             />
           </div>
 
+          <div style={{ marginTop: 12 }}>
+            <label className="input-label">Chọn điểm bắt đầu trên bản đồ (Đà Nẵng)</label>
+            <MapPicker
+              latitude={formData.startLat}
+              longitude={formData.startLng}
+              bounds={DA_NANG_BOUNDS}
+              height={280}
+              onChange={({ lat, lng }) => {
+                handleChange('startLat', lat.toFixed(6));
+                handleChange('startLng', lng.toFixed(6));
+              }}
+            />
+          </div>
+
           <h4 className="section-subtitle">📍 Điểm kết thúc</h4>
           <div className="form-grid">
             <Input
@@ -438,6 +476,20 @@ const RestrictedForm = () => {
               error={errors.endLng}
               required
               ref={errorRefs.endLng}
+            />
+          </div>
+
+          <div style={{ marginTop: 12 }}>
+            <label className="input-label">Chọn điểm kết thúc trên bản đồ (Đà Nẵng)</label>
+            <MapPicker
+              latitude={formData.endLat}
+              longitude={formData.endLng}
+              bounds={DA_NANG_BOUNDS}
+              height={280}
+              onChange={({ lat, lng }) => {
+                handleChange('endLat', lat.toFixed(6));
+                handleChange('endLng', lng.toFixed(6));
+              }}
             />
           </div>
           <p className="form-hint">

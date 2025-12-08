@@ -14,7 +14,9 @@ import {
   ROUTES,
   TYPE_OPTIONS,
   USER_ROLES,
+  DA_NANG_BOUNDS,
 } from "../../../constants";
+import MapPicker from '../../../components/common/MapPicker/MapPicker';
 import slugify from "slugify";
 import "./ParkingForm.css";
 import { de } from "date-fns/locale";
@@ -106,16 +108,16 @@ const ParkingForm = () => {
     if (formData.latitude) {
       const latN = Number(formData.latitude);
       if (isNaN(latN)) newErrors.latitude = "Vĩ độ phải là số hợp lệ";
-      else if (latN < -90 || latN > 90)
-        newErrors.latitude = "Vĩ độ phải trong khoảng từ -90 đến 90";
+      else if (latN < DA_NANG_BOUNDS.south || latN > DA_NANG_BOUNDS.north)
+        newErrors.latitude = `Vĩ độ phải nằm trong phạm vi Đà Nẵng (${DA_NANG_BOUNDS.south} - ${DA_NANG_BOUNDS.north})`;
     }
 
     // Longitude
     if (formData.longitude) {
       const lngN = Number(formData.longitude);
       if (isNaN(lngN)) newErrors.longitude = "Kinh độ phải là số hợp lệ";
-      else if (lngN < -180 || lngN > 180)
-        newErrors.longitude = "Kinh độ phải trong khoảng từ -180 đến 180";
+      else if (lngN < DA_NANG_BOUNDS.west || lngN > DA_NANG_BOUNDS.east)
+        newErrors.longitude = `Kinh độ phải nằm trong phạm vi Đà Nẵng (${DA_NANG_BOUNDS.west} - ${DA_NANG_BOUNDS.east})`;
     }
 
     setErrors(newErrors);
@@ -355,6 +357,20 @@ const ParkingForm = () => {
               error={errors.longitude}
               required
               ref={errorRefs.longitude}
+            />
+          </div>
+        
+          <div style={{ marginTop: 12 }}>
+            <label className="input-label">Chọn trên bản đồ (Giới hạn Đà Nẵng)</label>
+            <MapPicker
+              latitude={formData.latitude}
+              longitude={formData.longitude}
+              bounds={DA_NANG_BOUNDS}
+              height={320}
+              onChange={({ lat, lng }) => {
+                handleChange('latitude', lat.toFixed(6));
+                handleChange('longitude', lng.toFixed(6));
+              }}
             />
           </div>
           <p className="form-hint">

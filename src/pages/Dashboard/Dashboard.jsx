@@ -18,6 +18,8 @@ import {
   Area, 
   BarChart, 
   Bar, 
+  LineChart,
+  Line,
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -25,7 +27,7 @@ import {
   Legend, 
   ResponsiveContainer 
 } from 'recharts';
-import { getDashboardStatistics, getRecentActivities } from '../../services/dashboardService';
+import { getDashboardStatistics, getFeedbackStatistics, getParkingRouteStatistics, getUserStatistics } from '../../services/dashboardService';
 import { ROUTES } from '../../constants';
 import './Dashboard.css';
 
@@ -38,54 +40,95 @@ const Dashboard = () => {
     totalFeedback: 0,
     totalUsers: 0,
   });
-  const [recentActivities, setRecentActivities] = useState([]);
-
-  // Dữ liệu mẫu cho biểu đồ
-  const chartData = [
-    { month: 'T1', parkingLots: 15, restrictedZones: 8 },
-    { month: 'T2', parkingLots: 18, restrictedZones: 10 },
-    { month: 'T3', parkingLots: 22, restrictedZones: 12 },
-    { month: 'T4', parkingLots: 25, restrictedZones: 15 },
-    { month: 'T5', parkingLots: 28, restrictedZones: 18 },
-    { month: 'T6', parkingLots: 32, restrictedZones: 20 },
-  ];
-
-  const feedbackChartData = [
-    { day: 'T2', positive: 45, negative: 10 },
-    { day: 'T3', positive: 52, negative: 8 },
-    { day: 'T4', positive: 38, negative: 12 },
-    { day: 'T5', positive: 60, negative: 5 },
-    { day: 'T6', positive: 55, negative: 7 },
-    { day: 'T7', positive: 48, negative: 6 },
-    { day: 'CN', positive: 42, negative: 4 },
-  ];
+  const [feedbackData, setFeedbackData] = useState([]);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [parkingRouteData, setParkingRouteData] = useState([]);
+  const [userData, setUserData] = useState([]);
+  
 
   useEffect(() => {
     fetchDashboardData();
+    fetchFeedbackStatistics();
+    fetchParkingRouteStatistics();
+    fetchUserStatistics();
   }, []);
 
   const fetchDashboardData = async () => {
     try {
-      // Dữ liệu mẫu - bạn sẽ thay bằng API thực
+      const stats = await getDashboardStatistics();
       setStatistics({
-        totalParkingLots: 145,
-        totalRestrictedZones: 89,
-        totalFeedback: 1234,
-        totalUsers: 5678,
+        totalParkingLots: stats.data.totalParkingSpots,
+        totalRestrictedZones: stats.data.totalNoParkingRoutes,
+        totalFeedback: stats.data.totalFeedbacks,
+        totalUsers: stats.data.totalUsers,
       });
-
-      setRecentActivities([
-        { id: 1, type: 'parking', action: 'Thêm mới', name: 'Bãi đỗ xe TTTM Indochina', time: '5 phút trước' },
-        { id: 2, type: 'restricted', action: 'Cập nhật', name: 'Tuyến cấm đường Lê Duẩn', time: '15 phút trước' },
-        { id: 3, type: 'feedback', action: 'Xóa', name: 'Feedback vi phạm', time: '30 phút trước' },
-        { id: 4, type: 'user', action: 'Chặn', name: 'Người dùng vi phạm', time: '1 giờ trước' },
-      ]);
 
       setLoading(false);
     } catch (error) {
       toast.error('Không thể tải dữ liệu dashboard');
       setLoading(false);
     }
+  };
+
+  const fetchFeedbackStatistics = async (year = selectedYear) => {
+    try {
+      const response = await getFeedbackStatistics(year);
+      if (response.success && response.data) {
+        // Chuyển đổi dữ liệu từ API sang format cho chart
+        const monthNames = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
+        const chartData = response.data.map(item => ({
+          month: monthNames[parseInt(item.month.replace('T', '')) - 1],
+          positive: item.highRating,
+          negative: item.lowRating,
+          total: item.highRating + item.lowRating
+        }));
+        setFeedbackData(chartData);
+      }
+    } catch (error) {
+      console.error('Error fetching feedback statistics:', error);
+      toast.error('Không thể tải dữ liệu thống kê phản hồi');
+    }
+  };
+
+  const fetchParkingRouteStatistics = async (year = selectedYear) => {
+    try {
+      const response = await getParkingRouteStatistics(year);
+      if (response.success && response.data) {
+        const formattedData = response.data.map(item => ({
+          month: `${item.month}`,
+          parkingLots: item.parkingSpot,
+          restrictedZones: item.noParkingRoute,
+        }));
+        setParkingRouteData(formattedData);
+      }
+    } catch (error) {
+      console.error('Error fetching parking route statistics:', error);
+      toast.error('Không thể tải dữ liệu thống kê tuyến cấm');
+    }
+  };
+
+  const fetchUserStatistics = async (year = selectedYear) => {
+    try {
+      const response = await getUserStatistics(year);
+      if (response.success && response.data) {
+        const formattedData = response.data.map(item => ({
+          month: item.month,
+          users: item.user
+        }));
+        setUserData(formattedData);
+      }
+    } catch (error) {
+      console.error('Error fetching user statistics:', error);
+      toast.error('Không thể tải dữ liệu thống kê người dùng');
+    }
+  };
+
+  const handleYearChange = (e) => {
+    const year = parseInt(e.target.value);
+    setSelectedYear(year);
+    fetchFeedbackStatistics(year);
+    fetchParkingRouteStatistics(year);
+    fetchUserStatistics(year);
   };
 
   const statCards = [
@@ -161,11 +204,53 @@ const Dashboard = () => {
         ))}
       </div>
 
+      {/* Year Filter */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'flex-end', 
+        alignItems: 'center',
+        marginTop: '24px',
+        marginBottom: '16px',
+        gap: '12px'
+      }}>
+        <span style={{ fontWeight: '600', fontSize: '15px', color: '#333' }}>Lọc theo năm:</span>
+        <select 
+          value={selectedYear} 
+          onChange={handleYearChange}
+          style={{
+            padding: '10px 20px',
+            border: '2px solid #e0e0e0',
+            borderRadius: '8px',
+            fontSize: '15px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            backgroundColor: '#fff',
+            color: '#333',
+            outline: 'none',
+            transition: 'all 0.2s ease',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+            minWidth: '120px'
+          }}
+          onMouseOver={(e) => {
+            e.target.style.borderColor = '#4A90E2';
+            e.target.style.boxShadow = '0 4px 12px rgba(74, 144, 226, 0.2)';
+          }}
+          onMouseOut={(e) => {
+            e.target.style.borderColor = '#e0e0e0';
+            e.target.style.boxShadow = '0 2px 6px rgba(0,0,0,0.08)';
+          }}
+        >
+          {Array.from({ length: new Date().getFullYear() - 2025 + 1 }, (_, i) => 2025 + i).reverse().map(year => (
+            <option key={year} value={year}>Năm {year}</option>
+          ))}
+        </select>
+      </div>
+
       {/* Charts Row */}
       <div className="charts-row">
-        <Card title="Thống kê theo tháng" className="chart-card">
+        <Card title="Thống kê số lượng bãi đỗ và tuyến cấm" className="chart-card">
           <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={chartData}>
+            <AreaChart data={parkingRouteData}>
               <defs>
                 <linearGradient id="colorParking" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#FF6B35" stopOpacity={0.8}/>
@@ -201,42 +286,50 @@ const Dashboard = () => {
           </ResponsiveContainer>
         </Card>
 
-        <Card title="Phản hồi trong tuần" className="chart-card">
+        <Card title="Thống kê phản hồi" className="chart-card">
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={feedbackChartData}>
+            <BarChart data={feedbackData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
+              <XAxis dataKey="month" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="positive" fill="#06D6A0" name="Tích cực" />
-              <Bar dataKey="negative" fill="#EF476F" name="Tiêu cực" />
+              <Bar dataKey="positive" fill="#06D6A0" name="Đánh giá cao (4-5 sao)" />
+              <Bar dataKey="negative" fill="#EF476F" name="Đánh giá thấp (1-3 sao)" />
             </BarChart>
           </ResponsiveContainer>
         </Card>
       </div>
 
-      {/* Recent Activities */}
-      <Card title="Hoạt động gần đây">
-        <div className="activities-list">
-          {recentActivities.map((activity) => (
-            <div key={activity.id} className="activity-item">
-              <div className={`activity-icon activity-${activity.type}`}>
-                {activity.type === 'parking' && <FaParking />}
-                {activity.type === 'restricted' && <FaBan />}
-                {activity.type === 'feedback' && <FaComments />}
-                {activity.type === 'user' && <FaUsers />}
-              </div>
-              <div className="activity-content">
-                <p className="activity-text">
-                  <span className="activity-action">{activity.action}</span> {activity.name}
-                </p>
-                <span className="activity-time">{activity.time}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
+      {/* User Growth Chart - Full Width */}
+      <div style={{ marginTop: '24px' }}>
+        <Card title = "Thống kê số lượng người dùng đăng ký" className="chart-card">
+          <ResponsiveContainer width="100%" height={350}>
+            <LineChart data={userData}>
+              <defs>
+                <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#118AB2" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#118AB2" stopOpacity={0.1}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line 
+                type="monotone" 
+                dataKey="users" 
+                stroke="#118AB2" 
+                strokeWidth={3}
+                dot={{ fill: '#118AB2', r: 5 }}
+                activeDot={{ r: 7 }}
+                name="Số người dùng"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </Card>
+      </div>
     </div>
   );
 };

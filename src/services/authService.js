@@ -50,7 +50,8 @@ export const isAuthenticated = () => {
 // Ping API - check session
 export const ping = async () => {
   try {
-    const response = await axiosInstance.get('/ping', { withCredentials: true });
+    // Backend expects POST for ping (keep body empty and send cookies)
+    const response = await axiosInstance.post('ping', {}, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.error('Ping error:', error);
@@ -61,7 +62,7 @@ export const ping = async () => {
 // Change password
 export const changePassword = async (oldPassword, newPassword) => {
   try {
-    const response = await axiosInstance.post('/auth/change-password', {
+    const response = await axiosInstance.post('auth/change-password', {
       oldPassword,
       newPassword,
     });
@@ -74,7 +75,7 @@ export const changePassword = async (oldPassword, newPassword) => {
 // Verify token
 export const verifyToken = async () => {
   try {
-    const response = await axiosInstance.get('/auth/verify');
+    const response = await axiosInstance.get('auth/verify');
     return response.data;
   } catch (error) {
     throw error;
