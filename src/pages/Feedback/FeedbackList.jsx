@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import  { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { FaSearch, FaTrash, FaExclamationTriangle } from 'react-icons/fa';
 import Card from '../../components/common/Card/Card';
@@ -7,48 +6,52 @@ import Button from '../../components/common/Button/Button';
 import Table from '../../components/common/Table/Table';
 import Input from '../../components/common/Input/Input';
 import Modal from '../../components/common/Modal/Modal';
+import Pagination from '../../components/common/Pagination/Pagination';
 import { getAllFeedback, deleteFeedback } from '../../services/feedbackService';
 import { checkInappropriateWords, formatDateTime } from '../../utils/helpers';
 import './FeedbackList.css';
 
 const FeedbackList = () => {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [feedbackList, setFeedbackList] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
 
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 10;
+
   useEffect(() => {
     fetchFeedback();
-  }, []);
+  }, [currentPage, searchTerm]);
 
   const fetchFeedback = async () => {
+    setLoading(true);
     try {
-      const mockData = [
-        {
-          id: 1,
-          userName: 'Nguyễn Văn A',
-          parkingLotName: 'Bãi đỗ xe TTTM Indochina',
-          rating: 5,
-          comment: 'Bãi đỗ rộng rãi, giá cả hợp lý',
-          createdAt: '2025-11-18T10:30:00',
-          isInappropriate: false,
-        },
-        {
-          id: 2,
-          userName: 'Trần Thị B',
-          parkingLotName: 'Bãi đỗ xe Lotte Mart',
-          rating: 2,
-          comment: 'Bãi đỗ này đồ chó quá, không bao giờ quay lại',
-          createdAt: '2025-11-18T09:15:00',
-          isInappropriate: true,
-        },
-      ];
+      const res = await getAllFeedback({
+        pageNumber: currentPage,
+        pageSize: itemsPerPage,
+        query: searchTerm,
+      });
       
-      setFeedbackList(mockData);
+      if(res.success){
+        // Kiểm tra từ ngữ không phù hợp cho mỗi feedback
+        const feedbackWithCheck = (res.data || []).map(feedback => ({
+          ...feedback,
+          isInappropriate: checkInappropriateWords(feedback.comment || '')
+        }));
+        
+        setFeedbackList(feedbackWithCheck);
+        setTotalItems(res.pagination?.totalItems ?? 0);
+        setTotalPages(res.pagination?.totalPages ?? 0);
+        setCurrentPage(res.pagination?.currentPage ?? 1);
+      }
       setLoading(false);
     } catch (error) {
       toast.error('Không thể tải danh sách feedback');
+      setFeedbackList([]);
       setLoading(false);
     }
   };
@@ -64,24 +67,25 @@ const FeedbackList = () => {
     }
   };
 
-  const filteredData = feedbackList.filter(item =>
-    item.parkingLotName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.userName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleSearchChange = (e) => {
+    console.log("Search term changed:", e.target.value);
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
 
   const columns = [
     {
       header: 'Người dùng',
-      key: 'userName',
+      key: 'driverName',
     },
     {
       header: 'Bãi đỗ xe',
-      key: 'parkingLotName',
+      key: 'parkingSpotName',
       render: (value) => <strong>{value}</strong>,
     },
     {
       header: 'Đánh giá',
-      key: 'rating',
+      key: 'average_rating',
       align: 'center',
       render: (value) => (
         <div className="rating-stars">
@@ -105,17 +109,17 @@ const FeedbackList = () => {
     },
     {
       header: 'Thời gian',
-      key: 'createdAt',
+      key: 'updated_at',
       render: (value) => formatDateTime(value),
     },
     {
       header: 'Thao tác',
-      key: 'id',
+      key: 'feedback_id',
       align: 'center',
       width: '120px',
       render: (id, row) => (
         <div className="table-actions">
-          <button 
+          <button
             className="action-btn action-btn-danger"
             onClick={() => setDeleteModal({ isOpen: true, id })}
             title="Xóa"
@@ -142,7 +146,7 @@ const FeedbackList = () => {
             type="text"
             placeholder="Tìm kiếm theo bãi đỗ hoặc người dùng..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
             icon={<FaSearch />}
           />
           <div className="feedback-legend">
@@ -153,9 +157,18 @@ const FeedbackList = () => {
 
         <Table
           columns={columns}
-          data={filteredData}
+          data={feedbackList}
           loading={loading}
           emptyMessage="Không tìm thấy feedback nào"
+        />
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
         />
       </Card>
 

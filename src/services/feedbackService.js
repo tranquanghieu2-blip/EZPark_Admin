@@ -1,19 +1,26 @@
 import axiosInstance from './axios';
 
 // Get all feedback
-export const getAllFeedback = async (params = {}) => {
+export const getAllFeedback = async ({
+  pageNumber = 1,
+  pageSize = 10,
+  query = "",
+} = {}) => {
   try {
-    const response = await axiosInstance.get('/feedback', { params });
+    const response = await axiosInstance.get('feedbacks/list', {
+      params: { pageNumber, pageSize, query }
+    });
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
+
 // Get feedback by parking lot ID
-export const getFeedbackByParkingLot = async (parkingLotId, params = {}) => {
+export const getFeedbackByID = async (feedbackId) => {
   try {
-    const response = await axiosInstance.get(`/feedback/parking-lot/${parkingLotId}`, { params });
+    const response = await axiosInstance.get(`feedbacks/${feedbackId}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -33,7 +40,7 @@ export const getFeedbackById = async (id) => {
 // Delete feedback
 export const deleteFeedback = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/feedback/${id}`);
+    const response = await axiosInstance.delete(`/feedbacks/${id}`);
     return response.data;
   } catch (error) {
     throw error;
