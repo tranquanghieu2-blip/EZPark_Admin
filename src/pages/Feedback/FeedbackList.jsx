@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { FaSearch, FaTrash, FaExclamationTriangle } from 'react-icons/fa';
 import Card from '../../components/common/Card/Card';
@@ -35,14 +35,14 @@ const FeedbackList = () => {
         pageSize: itemsPerPage,
         query: searchTerm,
       });
-      
-      if(res.success){
+
+      if (res.success) {
         // Kiểm tra từ ngữ không phù hợp cho mỗi feedback
         const feedbackWithCheck = (res.data || []).map(feedback => ({
           ...feedback,
           isInappropriate: checkInappropriateWords(feedback.comment || '')
         }));
-        
+
         setFeedbackList(feedbackWithCheck);
         setTotalItems(res.pagination?.totalItems ?? 0);
         setTotalPages(res.pagination?.totalPages ?? 0);
@@ -72,6 +72,7 @@ const FeedbackList = () => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
   };
+
 
   const columns = [
     {

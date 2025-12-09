@@ -6,7 +6,8 @@ import Button from '../../components/common/Button/Button';
 import Table from '../../components/common/Table/Table';
 import Input from '../../components/common/Input/Input';
 import Modal from '../../components/common/Modal/Modal';
-import { getAllUsers, deleteUser, toggleUserStatus } from '../../services/userService';
+import Pagination from '../../components/common/Pagination/Pagination';
+import { getAllUsers, deleteUser} from '../../services/userService';
 import { formatDateTime } from '../../utils/helpers';
 import './UserList.css';
 
@@ -16,36 +17,36 @@ const UserList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, name: '' });
 
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 10;
+
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [currentPage, searchTerm]);
 
   const fetchUsers = async () => {
     try {
-      const mockData = [
-        {
-          id: 1,
-          name: 'Nguyễn Văn A',
-          email: 'nguyenvana@example.com',
-          phone: '0123456789',
-          status: 'active',
-          createdAt: '2025-01-15T10:30:00',
-        },
-        {
-          id: 2,
-          name: 'Trần Thị B',
-          email: 'tranthib@example.com',
-          phone: '0987654321',
-          status: 'blocked',
-          createdAt: '2025-02-20T14:20:00',
-        },
-      ];
-      
-      setUsers(mockData);
+      const res = await getAllUsers({
+        pageNumber: currentPage,
+        pageSize: itemsPerPage,
+        query: searchTerm,
+      });
+
+      if (res.success) {
+        setUsers(res.data || []);
+        setTotalItems(res.pagination?.totalItems ?? 0);
+        setTotalPages(res.pagination?.totalPages ?? 0);
+        setCurrentPage(res.pagination?.currentPage ?? 1);
+      }
       setLoading(false);
     } catch (error) {
       toast.error('Không thể tải danh sách người dùng');
+      setUsers([]);
       setLoading(false);
+ 
     }
   };
 
@@ -73,8 +74,14 @@ const UserList = () => {
 
   const filteredData = users.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.email.toLowerCase().includes(searchTerm.toLowerCase())
+    item.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+    const handleSearchChange = (e) => {
+    console.log("Search term changed:", e.target.value);
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
 
   const columns = [
     {
@@ -84,25 +91,21 @@ const UserList = () => {
     },
     {
       header: 'Email',
-      key: 'email',
+      key: 'username',
     },
-    {
-      header: 'Số điện thoại',
-      key: 'phone',
-    },
-    {
-      header: 'Trạng thái',
-      key: 'status',
-      align: 'center',
-      render: (value) => (
-        <span className={`badge ${value === 'active' ? 'badge-success' : 'badge-danger'}`}>
-          {value === 'active' ? 'Hoạt động' : 'Bị chặn'}
-        </span>
-      ),
-    },
+    // {
+    //   header: 'Trạng thái',
+    //   key: 'status',
+    //   align: 'center',
+    //   render: (value) => (
+    //     <span className={`badge ${value === 'active' ? 'badge-success' : 'badge-danger'}`}>
+    //       {value === 'active' ? 'Hoạt động' : 'Bị chặn'}
+    //     </span>
+    //   ),
+    // },
     {
       header: 'Ngày tạo',
-      key: 'createdAt',
+      key: 'created_at',
       render: (value) => formatDateTime(value),
     },
     {
@@ -112,14 +115,14 @@ const UserList = () => {
       width: '200px',
       render: (id, row) => (
         <div className="table-actions">
-          <button 
+          <button
             className={`action-btn ${row.status === 'active' ? 'action-btn-danger' : 'action-btn-primary'}`}
             onClick={() => handleToggleStatus(id, row.status)}
             title={row.status === 'active' ? 'Chặn' : 'Mở chặn'}
           >
             {row.status === 'active' ? <FaBan /> : <FaCheck />}
           </button>
-          <button 
+          <button
             className="action-btn action-btn-danger"
             onClick={() => setDeleteModal({ isOpen: true, id, name: row.name })}
             title="Xóa"
@@ -156,6 +159,14 @@ const UserList = () => {
           data={filteredData}
           loading={loading}
           emptyMessage="Không tìm thấy người dùng nào"
+        />
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
         />
       </Card>
 
