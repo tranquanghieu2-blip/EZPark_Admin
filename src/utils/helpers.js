@@ -1,5 +1,30 @@
 import { INAPPROPRIATE_WORDS } from '../constants';
 
+// Cache for inappropriate words loaded from file
+let inappropriateWordsCache = null;
+
+// Load inappropriate words from JSON file
+const loadInappropriateWords = async () => {
+  if (inappropriateWordsCache) {
+    return inappropriateWordsCache;
+  }
+  
+  try {
+    const response = await fetch('/inappropriate-words.json');
+    if (response.ok) {
+      const data = await response.json();
+      inappropriateWordsCache = data.words || INAPPROPRIATE_WORDS;
+      return inappropriateWordsCache;
+    }
+  } catch (error) {
+    console.warn('Could not load inappropriate words from file, using default list:', error);
+  }
+  
+  // Fallback to constants if file cannot be loaded
+  inappropriateWordsCache = INAPPROPRIATE_WORDS;
+  return inappropriateWordsCache;
+};
+
 // Format date
 export const formatDate = (date) => {
   if (!date) return '';
@@ -31,12 +56,18 @@ export const formatTime = (date) => {
   return `${hours}:${minutes}`;
 };
 
-// Check inappropriate words in text
+// Check inappropriate words in text (synchronous version using cache or constants)
 export const checkInappropriateWords = (text) => {
   if (!text) return false;
   const lowerText = text.toLowerCase();
-  return INAPPROPRIATE_WORDS.some(word => lowerText.includes(word.toLowerCase()));
+  const wordList = inappropriateWordsCache || INAPPROPRIATE_WORDS;
+  return wordList.some(word => lowerText.includes(word.toLowerCase()));
 };
+
+// Initialize inappropriate words on module load
+loadInappropriateWords().catch(err => {
+  console.warn('Failed to preload inappropriate words:', err);
+});
 
 // Truncate text
 export const truncateText = (text, maxLength = 100) => {
