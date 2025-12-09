@@ -8,6 +8,7 @@ import Input from '../../components/common/Input/Input';
 import Modal from '../../components/common/Modal/Modal';
 import { getAllUsers, deleteUser, toggleUserStatus } from '../../services/userService';
 import { formatDateTime } from '../../utils/helpers';
+import socket from '../../socket';
 import './UserList.css';
 
 const UserList = () => {
@@ -19,6 +20,21 @@ const UserList = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    const handleUserUpdated = (payload) => {
+      console.log("👤 User updated event:", payload);
+      toast.info('Thông tin người dùng vừa được cập nhật');
+      fetchUsers(); // Tải lại danh sách user
+    };
+
+    socket.on('userUpdated', handleUserUpdated);
+
+    return () => {
+      socket.off('userUpdated', handleUserUpdated);
+    };
+  }, []);
+
 
   const fetchUsers = async () => {
     try {
