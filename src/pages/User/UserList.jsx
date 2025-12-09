@@ -9,6 +9,7 @@ import Modal from '../../components/common/Modal/Modal';
 import Pagination from '../../components/common/Pagination/Pagination';
 import { getAllUsers, deleteUser} from '../../services/userService';
 import { formatDateTime } from '../../utils/helpers';
+import socket from '../../socket';
 import './UserList.css';
 
 const UserList = () => {
@@ -26,6 +27,21 @@ const UserList = () => {
   useEffect(() => {
     fetchUsers();
   }, [currentPage, searchTerm]);
+
+  useEffect(() => {
+    const handleUserUpdated = (payload) => {
+      console.log("👤 User updated event:", payload);
+      toast.info('Thông tin người dùng vừa được cập nhật');
+      fetchUsers(); // Tải lại danh sách user
+    };
+
+    socket.on('userUpdated', handleUserUpdated);
+
+    return () => {
+      socket.off('userUpdated', handleUserUpdated);
+    };
+  }, []);
+
 
   const fetchUsers = async () => {
     try {

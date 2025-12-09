@@ -9,6 +9,7 @@ import Modal from '../../components/common/Modal/Modal';
 import Pagination from '../../components/common/Pagination/Pagination';
 import { getAllFeedback, deleteFeedback } from '../../services/feedbackService';
 import { checkInappropriateWords, formatDateTime } from '../../utils/helpers';
+import socket from '../../socket';
 import './FeedbackList.css';
 
 const FeedbackList = () => {
@@ -26,6 +27,28 @@ const FeedbackList = () => {
   useEffect(() => {
     fetchFeedback();
   }, [currentPage, searchTerm]);
+
+  useEffect(() => {
+  const handleNewFeedback = (payload) => {
+    console.log("📥 New feedback event:", payload);
+    toast.info('Có feedback mới');
+    fetchFeedback(); // Reload danh sách feedback
+  };
+
+  const handleFeedbackStatus = (payload) => {
+    console.log("🔄 Feedback status changed:", payload);
+    fetchFeedback(); // Reload khi feedback được cập nhật / xoá
+  };
+
+  socket.on('newFeedback', handleNewFeedback);
+  socket.on('feedbackStatus', handleFeedbackStatus);
+
+  return () => {
+    socket.off('newFeedback', handleNewFeedback);
+    socket.off('feedbackStatus', handleFeedbackStatus);
+  };
+}, []);
+
 
   const fetchFeedback = async () => {
     setLoading(true);

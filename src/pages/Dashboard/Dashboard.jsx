@@ -29,6 +29,7 @@ import {
 } from 'recharts';
 import { getDashboardStatistics, getFeedbackStatistics, getParkingRouteStatistics, getUserStatistics } from '../../services/dashboardService';
 import { ROUTES } from '../../constants';
+import socket from '../../socket';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -52,6 +53,36 @@ const Dashboard = () => {
     fetchParkingRouteStatistics();
     fetchUserStatistics();
   }, []);
+
+  useEffect(() => {
+  const handleFeedbackChanged = (payload) => {
+    console.log("📥 Realtime feedback:", payload);
+    
+    // Luôn reload thống kê khi có feedback mới / update / delete
+    fetchDashboardData();
+    fetchFeedbackStatistics(selectedYear);
+  };
+
+  const handleUserUpdated = (payload) => {
+    console.log("👤 Realtime user updated:", payload);
+
+    // Luôn reload thống kê khi có user update
+    fetchDashboardData();
+    fetchUserStatistics(selectedYear);
+  };
+
+  socket.on('newFeedback', handleFeedbackChanged);
+  socket.on('feedbackStatus', handleFeedbackChanged);
+  socket.on('userUpdated', handleUserUpdated);
+
+  return () => {
+    socket.off('newFeedback', handleFeedbackChanged);
+    socket.off('feedbackStatus', handleFeedbackChanged);
+    socket.off('userUpdated', handleUserUpdated);
+  };
+
+}, []); // <-- chạy đúng 1 lần duy nhất
+
 
   const fetchDashboardData = async () => {
     try {
