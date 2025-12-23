@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import React, { useEffect, useState, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './MapPicker.css';
@@ -25,6 +25,21 @@ const ClickHandler = ({ onMapClick }) => {
   return null;
 };
 
+// Component để tự động di chuyển map khi marker thay đổi
+const MapUpdater = ({ marker }) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (marker) {
+      map.flyTo([marker.lat, marker.lng], 15, {
+        duration: 1
+      });
+    }
+  }, [marker, map]);
+  
+  return null;
+};
+
 const MapPicker = ({ latitude, longitude, onChange, bounds, height = 300 }) => {
   const center = {
     lat: latitude ? Number(latitude) : (bounds ? (bounds.north + bounds.south) / 2 : 16.04708),
@@ -32,10 +47,17 @@ const MapPicker = ({ latitude, longitude, onChange, bounds, height = 300 }) => {
   };
 
   const [marker, setMarker] = useState(latitude && longitude ? { lat: Number(latitude), lng: Number(longitude) } : null);
+  const initialMarkerSet = useRef(false);
 
   useEffect(() => {
     if (latitude && longitude) {
-      setMarker({ lat: Number(latitude), lng: Number(longitude) });
+      const newMarker = { lat: Number(latitude), lng: Number(longitude) };
+      setMarker(newMarker);
+      
+      // Đánh dấu là đã set marker ban đầu
+      if (!initialMarkerSet.current) {
+        initialMarkerSet.current = true;
+      }
     }
   }, [latitude, longitude]);
 
@@ -65,6 +87,7 @@ const MapPicker = ({ latitude, longitude, onChange, bounds, height = 300 }) => {
       }}>
         <TileLayer {...tileLayerProps} />
         <ClickHandler onMapClick={handleMapClick} />
+        <MapUpdater marker={marker} />
         {marker && <Marker position={[marker.lat, marker.lng]} />}
       </MapContainer>
     </div>

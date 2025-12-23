@@ -7,7 +7,7 @@ import Button from '../../../components/common/Button/Button';
 import Input from '../../../components/common/Input/Input';
 import { createRestrictedZone, updateRestrictedZone } from '../../../services/restrictedZoneService';
 import { RESTRICTED_TYPES, RESTRICTED_SIDES, ROUTES, RESTRICTED_TYPE_OPTIONS, RESTRICTED_SIDE_OPTIONS, USER_ROLES, DA_NANG_BOUNDS } from '../../../constants';
-import MapPicker from '../../../components/common/MapPicker/MapPicker';
+import DualMarkerMapPicker from '../../../components/common/DualMarkerMapPicker/DualMarkerMapPicker';
 import './RestrictedForm.css';
 
 const RestrictedForm = () => {
@@ -406,95 +406,92 @@ const RestrictedForm = () => {
             {errors.days_restricted && (
               <span className="input-error-text">{errors.days_restricted}</span>
             )}
-            <p className="form-hint">💡 Click để chọn/bỏ chọn ngày áp dụng cấm</p>
+            <p className="form-hint">Click để chọn/bỏ chọn ngày áp dụng cấm</p>
           </div>
         </Card>
 
         <Card title="Vị trí địa lý">
-          <h4 className="section-subtitle">📍 Điểm bắt đầu</h4>
           <div className="form-grid">
-            <Input
-              label="Vĩ độ (Latitude)"
-              type="number"
-              step="any"
-              placeholder="VD: 16.0544"
-              value={formData.startLat}
-              onChange={(e) => handleChange('startLat', e.target.value)}
-              error={errors.startLat}
-              required
-              ref={errorRefs.startLat}
-            />
+            <div>
+              <h4 className="section-subtitle">Điểm bắt đầu</h4>
+              <div className="form-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
+                <Input
+                  label="Vĩ độ (Latitude)"
+                  type="number"
+                  step="any"
+                  placeholder="VD: 16.0544"
+                  value={formData.startLat}
+                  onChange={(e) => handleChange('startLat', e.target.value)}
+                  error={errors.startLat}
+                  required
+                  ref={errorRefs.startLat}
+                />
 
-            <Input
-              label="Kinh độ (Longitude)"
-              type="number"
-              step="any"
-              placeholder="VD: 108.2022"
-              value={formData.startLng}
-              onChange={(e) => handleChange('startLng', e.target.value)}
-              error={errors.startLng}
-              required
-              ref={errorRefs.startLng}
-            />
+                <Input
+                  label="Kinh độ (Longitude)"
+                  type="number"
+                  step="any"
+                  placeholder="VD: 108.2022"
+                  value={formData.startLng}
+                  onChange={(e) => handleChange('startLng', e.target.value)}
+                  error={errors.startLng}
+                  required
+                  ref={errorRefs.startLng}
+                />
+              </div>
+            </div>
+
+            <div>
+              <h4 className="section-subtitle">Điểm kết thúc</h4>
+              <div className="form-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
+                <Input
+                  label="Vĩ độ (Latitude)"
+                  type="number"
+                  step="any"
+                  placeholder="VD: 16.0678"
+                  value={formData.endLat}
+                  onChange={(e) => handleChange('endLat', e.target.value)}
+                  error={errors.endLat}
+                  required
+                  ref={errorRefs.endLat}
+                />
+
+                <Input
+                  label="Kinh độ (Longitude)"
+                  type="number"
+                  step="any"
+                  placeholder="VD: 108.2209"
+                  value={formData.endLng}
+                  onChange={(e) => handleChange('endLng', e.target.value)}
+                  error={errors.endLng}
+                  required
+                  ref={errorRefs.endLng}
+                />
+              </div>
+            </div>
           </div>
 
-          <div style={{ marginTop: 12 }}>
-            <label className="input-label">Chọn điểm bắt đầu trên bản đồ (Đà Nẵng)</label>
-            <MapPicker
-              latitude={formData.startLat}
-              longitude={formData.startLng}
+          <div style={{ marginTop: 24 }}>
+            <DualMarkerMapPicker
+              startLat={formData.startLat}
+              startLng={formData.startLng}
+              endLat={formData.endLat}
+              endLng={formData.endLng}
               bounds={DA_NANG_BOUNDS}
-              height={280}
-              onChange={({ lat, lng }) => {
+              height={450}
+              onStartChange={({ lat, lng }) => {
                 handleChange('startLat', lat.toFixed(6));
                 handleChange('startLng', lng.toFixed(6));
               }}
-            />
-          </div>
-
-          <h4 className="section-subtitle">📍 Điểm kết thúc</h4>
-          <div className="form-grid">
-            <Input
-              label="Vĩ độ (Latitude)"
-              type="number"
-              step="any"
-              placeholder="VD: 16.0678"
-              value={formData.endLat}
-              onChange={(e) => handleChange('endLat', e.target.value)}
-              error={errors.endLat}
-              required
-              ref={errorRefs.endLat}
-            />
-
-            <Input
-              label="Kinh độ (Longitude)"
-              type="number"
-              step="any"
-              placeholder="VD: 108.2209"
-              value={formData.endLng}
-              onChange={(e) => handleChange('endLng', e.target.value)}
-              error={errors.endLng}
-              required
-              ref={errorRefs.endLng}
-            />
-          </div>
-
-          <div style={{ marginTop: 12 }}>
-            <label className="input-label">Chọn điểm kết thúc trên bản đồ (Đà Nẵng)</label>
-            <MapPicker
-              latitude={formData.endLat}
-              longitude={formData.endLng}
-              bounds={DA_NANG_BOUNDS}
-              height={280}
-              onChange={({ lat, lng }) => {
+              onEndChange={({ lat, lng }) => {
                 handleChange('endLat', lat.toFixed(6));
                 handleChange('endLng', lng.toFixed(6));
               }}
             />
           </div>
-          <p className="form-hint">
+          {/* <p className="form-hint" style={{ marginTop: 12 }}>
             💡 Mẹo: Bạn có thể lấy tọa độ từ Google Maps bằng cách nhấp chuột phải vào vị trí
-          </p>
+          </p> */}
         </Card>
 
         <div className="form-actions">

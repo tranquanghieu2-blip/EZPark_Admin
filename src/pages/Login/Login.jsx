@@ -73,7 +73,7 @@ const Login = () => {
             <div className="logo-icon">EZ</div>
           </div>
           <h1 className="login-title">EZPark Admin</h1>
-          <p className="login-subtitle">Quản lý bãi đỗ xe - Đà Nẵng</p>
+          <p className="login-subtitle">Quản lý bãi đỗ xe và tuyến cấm - Đà Nẵng</p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
@@ -109,10 +109,6 @@ const Login = () => {
             Đăng nhập
           </Button>
         </form>
-
-        <div className="login-footer">
-          <p>© 2025 EZPark. All rights reserved.</p>
-        </div>
       </div>
     </div>
   );

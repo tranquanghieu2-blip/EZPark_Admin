@@ -161,12 +161,12 @@ const RestrictedList = () => {
       width: "200px",
       render: (id, row) => (
         <div className="table-actions">
-          <button
+          {/* <button
             className="action-btn action-btn-primary"
             onClick={() => navigate(`/restricted-zones/${id}`)}
           >
             <FaEye />
-          </button>
+          </button> */}
 
           <button
             className="action-btn action-btn-primary"
