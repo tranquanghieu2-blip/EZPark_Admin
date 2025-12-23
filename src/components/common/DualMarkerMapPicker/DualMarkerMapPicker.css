@@ -1,0 +1,154 @@
+.dual-marker-map-picker {
+  width: 100%;
+}
+
+.map-controls {
+  margin-bottom: 16px;
+}
+
+.mode-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.mode-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 2px solid #E5E7EB;
+  border-radius: 8px;
+  background: white;
+  color: #6B7280;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+  background: #F9FAFB;
+  border-color: #D1D5DB;
+}
+
+.mode-btn.active {
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.mode-btn.active.start {
+  background: linear-gradient(135deg, #06D6A0 0%, #05B386 100%);
+}
+
+.mode-btn.active.end {
+  background: linear-gradient(135deg, #EF476F 0%, #D63A5C 100%);
+}
+
+.marker-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.marker-indicator.start {
+  background-color: #06D6A0;
+}
+
+.marker-indicator.end {
+  background-color: #EF476F;
+}
+
+.map-hint {
+  font-size: 13px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.map-container {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.marker-legend {
+  display: flex;
+  gap: 24px;
+  margin-top: 12px;
+  padding: 12px;
+  background: #F9FAFB;
+  border-radius: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.legend-marker {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.legend-marker.start {
+  background-color: #06D6A0;
+}
+
+.legend-marker.end {
+  background-color: #EF476F;
+}
+
+.coords {
+  font-size: 11px;
+  color: #6B7280;
+  font-family: 'Courier New', monospace;
+}
+
+/* Custom marker icon styles */
+.custom-marker-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Leaflet polyline styles */
+.leaflet-interactive {
+  cursor: pointer;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mode-btn {
+    background: #1F2937;
+    border-color: #374151;
+    color: #D1D5DB;
+  }
+
+  .mode-btn:hover {
+    background: #374151;
+    border-color: #4B5563;
+  }
+
+  .marker-legend {
+    background: #1F2937;
+  }
+
+  .legend-item {
+    color: #D1D5DB;
+  }
+
+  .coords {
+    color: #9CA3AF;
+  }
+}

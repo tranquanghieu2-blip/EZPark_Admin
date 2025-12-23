@@ -373,9 +373,9 @@ const ParkingForm = () => {
               }}
             />
           </div>
-          <p className="form-hint">
+          {/* <p className="form-hint">
             💡 Bạn có thể lấy tọa độ từ Google Maps bằng cách nhấp chuột phải.
-          </p>
+          </p> */}
         </Card>
 
         <div className="form-actions">

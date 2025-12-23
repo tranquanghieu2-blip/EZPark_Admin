@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { 
-  FaParking, 
-  FaBan, 
-  FaComments, 
+import {
+  FaParking,
+  FaBan,
+  FaComments,
   FaUsers,
   FaEye,
   FaEdit,
   FaTrash,
-  FaChartLine 
+  FaChartLine
 } from 'react-icons/fa';
 import Card from '../../components/common/Card/Card';
 import Button from '../../components/common/Button/Button';
-import { 
-  AreaChart, 
-  Area, 
-  BarChart, 
-  Bar, 
+import {
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
   LineChart,
   Line,
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer 
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
 } from 'recharts';
 import { getDashboardStatistics, getFeedbackStatistics, getParkingRouteStatistics, getUserStatistics } from '../../services/dashboardService';
 import { ROUTES } from '../../constants';
@@ -45,7 +45,7 @@ const Dashboard = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [parkingRouteData, setParkingRouteData] = useState([]);
   const [userData, setUserData] = useState([]);
-  
+
 
   useEffect(() => {
     fetchDashboardData();
@@ -55,33 +55,33 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-  const handleFeedbackChanged = (payload) => {
-    console.log("📥 Realtime feedback:", payload);
-    
-    // Luôn reload thống kê khi có feedback mới / update / delete
-    fetchDashboardData();
-    fetchFeedbackStatistics(selectedYear);
-  };
+    const handleFeedbackChanged = (payload) => {
+      console.log("📥 Realtime feedback:", payload);
 
-  const handleUserUpdated = (payload) => {
-    console.log("👤 Realtime user updated:", payload);
+      // Luôn reload thống kê khi có feedback mới / update / delete
+      fetchDashboardData();
+      fetchFeedbackStatistics(selectedYear);
+    };
 
-    // Luôn reload thống kê khi có user update
-    fetchDashboardData();
-    fetchUserStatistics(selectedYear);
-  };
+    const handleUserUpdated = (payload) => {
+      console.log("👤 Realtime user updated:", payload);
 
-  socket.on('newFeedback', handleFeedbackChanged);
-  socket.on('feedbackStatus', handleFeedbackChanged);
-  socket.on('userUpdated', handleUserUpdated);
+      // Luôn reload thống kê khi có user update
+      fetchDashboardData();
+      fetchUserStatistics(selectedYear);
+    };
 
-  return () => {
-    socket.off('newFeedback', handleFeedbackChanged);
-    socket.off('feedbackStatus', handleFeedbackChanged);
-    socket.off('userUpdated', handleUserUpdated);
-  };
+    socket.on('newFeedback', handleFeedbackChanged);
+    socket.on('feedbackStatus', handleFeedbackChanged);
+    socket.on('userUpdated', handleUserUpdated);
 
-}, []); // <-- chạy đúng 1 lần duy nhất
+    return () => {
+      socket.off('newFeedback', handleFeedbackChanged);
+      socket.off('feedbackStatus', handleFeedbackChanged);
+      socket.off('userUpdated', handleUserUpdated);
+    };
+
+  }, []); // <-- chạy đúng 1 lần duy nhất
 
 
   const fetchDashboardData = async () => {
@@ -207,17 +207,17 @@ const Dashboard = () => {
       <div className="dashboard-header">
         <div>
           <h1 className="dashboard-title">Dashboard</h1>
-          <p className="dashboard-subtitle">Tổng quan hệ thống quản lý bãi đỗ xe Đà Nẵng</p>
+          <p className="dashboard-subtitle">Tổng quan hệ thống quản lý bãi đỗ xe và tuyến cấm - Đà Nẵng</p>
         </div>
-        <Button variant="primary" icon={<FaChartLine />}>
+        {/* <Button variant="primary" icon={<FaChartLine />}>
           Xuất báo cáo
-        </Button>
+        </Button> */}
       </div>
 
       {/* Statistics Cards */}
       <div className="stats-grid">
         {statCards.map((stat, index) => (
-          <div 
+          <div
             key={index}
             className="stat-card"
             style={{ '--stat-color': stat.color }}
@@ -236,17 +236,17 @@ const Dashboard = () => {
       </div>
 
       {/* Year Filter */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'flex-end', 
+      <div style={{
+        display: 'flex',
+        justifyContent: 'flex-end',
         alignItems: 'center',
         marginTop: '24px',
         marginBottom: '16px',
         gap: '12px'
       }}>
         <span style={{ fontWeight: '600', fontSize: '15px', color: '#333' }}>Lọc theo năm:</span>
-        <select 
-          value={selectedYear} 
+        <select
+          value={selectedYear}
           onChange={handleYearChange}
           style={{
             padding: '10px 20px',
@@ -284,12 +284,12 @@ const Dashboard = () => {
             <AreaChart data={parkingRouteData}>
               <defs>
                 <linearGradient id="colorParking" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#FF6B35" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#FF6B35" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#FF6B35" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#FF6B35" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorRestricted" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#E63946" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#E63946" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#E63946" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#E63946" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" />
@@ -297,19 +297,19 @@ const Dashboard = () => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Area 
-                type="monotone" 
-                dataKey="parkingLots" 
-                stroke="#FF6B35" 
-                fillOpacity={1} 
+              <Area
+                type="monotone"
+                dataKey="parkingLots"
+                stroke="#FF6B35"
+                fillOpacity={1}
                 fill="url(#colorParking)"
                 name="Bãi đỗ xe"
               />
-              <Area 
-                type="monotone" 
-                dataKey="restrictedZones" 
-                stroke="#E63946" 
-                fillOpacity={1} 
+              <Area
+                type="monotone"
+                dataKey="restrictedZones"
+                stroke="#E63946"
+                fillOpacity={1}
                 fill="url(#colorRestricted)"
                 name="Tuyến cấm"
               />
@@ -334,13 +334,13 @@ const Dashboard = () => {
 
       {/* User Growth Chart - Full Width */}
       <div style={{ marginTop: '24px' }}>
-        <Card title = "Thống kê số lượng người dùng đăng ký" className="chart-card">
+        <Card title="Thống kê số lượng người dùng đăng ký" className="chart-card">
           <ResponsiveContainer width="100%" height={350}>
             <LineChart data={userData}>
               <defs>
                 <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#118AB2" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#118AB2" stopOpacity={0.1}/>
+                  <stop offset="5%" stopColor="#118AB2" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#118AB2" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" />
@@ -348,10 +348,10 @@ const Dashboard = () => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="users" 
-                stroke="#118AB2" 
+              <Line
+                type="monotone"
+                dataKey="users"
+                stroke="#118AB2"
                 strokeWidth={3}
                 dot={{ fill: '#118AB2', r: 5 }}
                 activeDot={{ r: 7 }}

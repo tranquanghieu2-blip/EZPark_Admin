@@ -28,7 +28,8 @@ const ParkingList = () => {
 
   const [loading, setLoading] = useState(true);
   const [parkingSpots, setParkingSpots] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchInput, setSearchInput] = useState(""); // Input value tạm thời
+  const [searchTerm, setSearchTerm] = useState(""); // Giá trị tìm kiếm thực tế sau debounce
 
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
@@ -80,6 +81,16 @@ const ParkingList = () => {
     setLoading(false);
   };
 
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchTerm(searchInput);
+      setCurrentPage(1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
   useEffect(() => {
     fetchParkingSpots();
   }, [currentPage, searchTerm]);
@@ -129,8 +140,7 @@ const ParkingList = () => {
 
 
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1);
+    setSearchInput(e.target.value);
   };
 
   const columns = [
@@ -167,13 +177,13 @@ const ParkingList = () => {
       width: "200px",
       render: (id, row) => (
         <div className="table-actions">
-          <button
+          {/* <button
             className="action-btn action-btn-primary"
             onClick={() => navigate(`/parking-spots/${id}`)}
             title="Xem chi tiết"
           >
             <FaEye />
-          </button>
+          </button> */}
 
           <button
             className="action-btn action-btn-primary"
@@ -236,7 +246,7 @@ const ParkingList = () => {
           <Input
             type="text"
             placeholder="Tìm theo tên hoặc địa chỉ..."
-            value={searchTerm}
+            value={searchInput}
             onChange={handleSearchChange}
             icon={<FaSearch />}
           />

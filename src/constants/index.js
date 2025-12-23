@@ -28,7 +28,7 @@ export const COLORS = {
 };
 
 // API Base URL (lấy từ biến môi trường)
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://ezpark-9gnn.onrender.com/api/admin/';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://ezpark.dev/api/admin/';
 
 // Routes
 export const ROUTES = {

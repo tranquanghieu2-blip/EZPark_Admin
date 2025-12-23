@@ -29,25 +29,25 @@ const FeedbackList = () => {
   }, [currentPage, searchTerm]);
 
   useEffect(() => {
-  const handleNewFeedback = (payload) => {
-    console.log("📥 New feedback event:", payload);
-    toast.info('Có feedback mới');
-    fetchFeedback(); // Reload danh sách feedback
-  };
+    const handleNewFeedback = (payload) => {
+      console.log("📥 New feedback event:", payload);
+      toast.info('Có feedback mới');
+      fetchFeedback(); // Reload danh sách feedback
+    };
 
-  const handleFeedbackStatus = (payload) => {
-    console.log("🔄 Feedback status changed:", payload);
-    fetchFeedback(); // Reload khi feedback được cập nhật / xoá
-  };
+    const handleFeedbackStatus = (payload) => {
+      console.log("🔄 Feedback status changed:", payload);
+      fetchFeedback(); // Reload khi feedback được cập nhật / xoá
+    };
 
-  socket.on('newFeedback', handleNewFeedback);
-  socket.on('feedbackStatus', handleFeedbackStatus);
+    socket.on('newFeedback', handleNewFeedback);
+    socket.on('feedbackStatus', handleFeedbackStatus);
 
-  return () => {
-    socket.off('newFeedback', handleNewFeedback);
-    socket.off('feedbackStatus', handleFeedbackStatus);
-  };
-}, []);
+    return () => {
+      socket.off('newFeedback', handleNewFeedback);
+      socket.off('feedbackStatus', handleFeedbackStatus);
+    };
+  }, []);
 
 
   const fetchFeedback = async () => {

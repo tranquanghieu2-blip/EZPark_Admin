@@ -7,7 +7,7 @@ import Table from '../../components/common/Table/Table';
 import Input from '../../components/common/Input/Input';
 import Modal from '../../components/common/Modal/Modal';
 import Pagination from '../../components/common/Pagination/Pagination';
-import { getAllUsers, deleteUser} from '../../services/userService';
+import { getAllUsers, deleteUser } from '../../services/userService';
 import { formatDateTime } from '../../utils/helpers';
 import socket from '../../socket';
 import './UserList.css';
@@ -62,7 +62,7 @@ const UserList = () => {
       toast.error('Không thể tải danh sách người dùng');
       setUsers([]);
       setLoading(false);
- 
+
     }
   };
 
@@ -93,7 +93,7 @@ const UserList = () => {
     item.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-    const handleSearchChange = (e) => {
+  const handleSearchChange = (e) => {
     console.log("Search term changed:", e.target.value);
     setSearchTerm(e.target.value);
     setCurrentPage(1);
@@ -131,13 +131,13 @@ const UserList = () => {
       width: '200px',
       render: (id, row) => (
         <div className="table-actions">
-          <button
+          {/* <button
             className={`action-btn ${row.status === 'active' ? 'action-btn-danger' : 'action-btn-primary'}`}
             onClick={() => handleToggleStatus(id, row.status)}
             title={row.status === 'active' ? 'Chặn' : 'Mở chặn'}
           >
             {row.status === 'active' ? <FaBan /> : <FaCheck />}
-          </button>
+          </button> */}
           <button
             className="action-btn action-btn-danger"
             onClick={() => setDeleteModal({ isOpen: true, id, name: row.name })}

@@ -13,14 +13,14 @@ const Navbar = ({ onMenuClick, user }) => {
         <button className="menu-toggle" onClick={onMenuClick}>
           <FaBars />
         </button>
-        <h1 className="navbar-title">Quản lý bãi đỗ xe - Đà Nẵng</h1>
+        <h1 className="navbar-title">Quản lý bãi đỗ xe và tuyến cấm - Đà Nẵng</h1>
       </div>
 
       <div className="navbar-right">
-        <button className="navbar-icon-btn">
+        {/* <button className="navbar-icon-btn">
           <FaBell />
           <span className="notification-badge">3</span>
-        </button>
+        </button> */}
 
         <div 
           className="navbar-user"

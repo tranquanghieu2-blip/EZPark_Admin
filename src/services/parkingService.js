@@ -22,7 +22,7 @@ export const getAllParkingSpots = async ({
 // Delete parking spot
 export const deleteParkingSpot = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/parking-spots/delete/${id}`, {
+    const response = await axiosInstance.delete(`parking-spots/delete/${id}`, {
       withCredentials: true,
     });
     return response.data;
